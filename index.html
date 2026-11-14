@@ -3,302 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NASA Space Mission Design Game - Team Sky_captains</title>
+    <title>NASA 3D Space Simulator - Team Sky_captains</title>
     <style>
         :root {
-            --bg-space: #020205;
+            --bg-space: #010409;
             --panel-bg: #0d1117;
-            --nasa-blue: #0b3d91;
-            --neon-cyan: #00f0ff;
-            --neon-yellow: #f3e600;
-            --text-main: #c9d1d9;
-            --alert-red: #ff3366;
-            --success-green: #00ff66;
+            --nasa-blue: #1f6feb;
+            --neon-cyan: #58a6ff;
+            --neon-yellow: #d29922;
+            --alert-red: #f85149;
+            --success-green: #2ea043;
+            --text-main: #f0f6fc;
         }
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; user-select: none; }
         body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: var(--bg-space);
-            color: var(--text-main);
             margin: 0; padding: 0;
+            background-color: var(--bg-space);
+            background-image: radial-gradient(white 1px, transparent 0);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            font-family: 'Courier New', Courier, monospace;
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
             overflow: hidden;
         }
-        .game-console {
-            width: 100%; max-width: 440px; height: 100%; max-height: 820px;
-            background: var(--panel-bg); border: 2px solid var(--nasa-blue);
-            border-radius: 10px; display: flex; flex-direction: column;
-            justify-content: space-between; padding: 12px;
-            box-shadow: 0 0 30px rgba(11, 61, 145, 0.6); position: relative;
+
+        /* LANDSCAPE COCKPIT WINDOW (Optimized for rotated phone / widescreen) */
+        .game-cockpit {
+            width: 95vw;
+            max-width: 900px;
+            height: 90vh;
+            max-height: 500px;
+            background: var(--panel-bg);
+            border: 3px solid var(--nasa-blue);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
+            box-shadow: 0 0 40px rgba(31, 111, 235, 0.4);
+            position: relative;
         }
+
+        /* HEADER & HUD */
         header {
-            border-bottom: 2px solid var(--nasa-blue); padding-bottom: 6px;
             display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--nasa-blue); padding-bottom: 8px;
         }
-        .logo-title { color: var(--neon-yellow); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; }
-        .team-badge { font-size: 0.6rem; background: var(--nasa-blue); padding: 2px 5px; border-radius: 4px; color: #fff; }
+        .logo { color: var(--neon-yellow); font-weight: bold; font-size: 1rem; text-transform: uppercase; }
         
-        .hud-bar {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
-            background: #000; padding: 6px; border-radius: 6px;
-            border: 1px solid var(--neon-cyan); margin-top: 8px; display: none;
+        .hud-stats {
+            display: flex; gap: 15px; background: #000; padding: 5px 15px;
+            border-radius: 6px; border: 1px solid var(--neon-cyan); font-size: 0.75rem;
         }
-        .hud-item { text-align: center; }
-        .hud-item label { display: block; font-size: 0.5rem; color: var(--neon-yellow); text-transform: uppercase; }
-        .hud-item span { font-size: 0.75rem; font-weight: bold; color: #fff; }
+        .hud-stats span b { color: var(--neon-yellow); }
 
-        .screen-view {
-            display: none; flex-direction: column; flex-grow: 1;
-            justify-content: flex-start; margin-top: 8px; overflow-y: auto;
-            max-height: calc(100% - 90px);
-        }
-        .screen-view.active { display: flex; }
+        /* SCREENS */
+        .screen { display: none; flex-grow: 1; flex-direction: column; margin-top: 10px; overflow-y: auto; }
+        .screen.active { display: flex; }
 
-        .visual-card {
-            width: 100%; height: 130px; background-size: cover; background-position: center;
-            border-radius: 6px; border: 1px solid var(--neon-cyan); margin-bottom: 8px; position: relative;
-        }
-        .photo-caption {
-            position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.8);
-            color: var(--neon-cyan); font-size: 0.6rem; padding: 3px; text-align: center;
-        }
-        h2 { color: var(--neon-cyan); font-size: 0.85rem; text-transform: uppercase; margin: 0 0 5px 0; }
-        p { font-size: 0.7rem; line-height: 1.3; color: #a0aec0; margin: 0 0 8px 0; }
+        h2 { color: var(--neon-cyan); font-size: 0.95rem; margin: 0 0 8px 0; text-transform: uppercase; text-align: center; }
+        p { font-size: 0.75rem; color: #8b949e; text-align: center; margin: 0 0 10px 0; }
 
-        .assembly-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
-        .part-slot {
-            background: #000; border: 1px dashed var(--nasa-blue); padding: 6px;
-            border-radius: 6px; text-align: center; cursor: pointer; transition: 0.2s;
+        /* HORIZONTAL ASSEMBLY WORKBENCH GRID */
+        .assembly-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            flex-grow: 1;
         }
-        .part-slot:hover { border-color: var(--neon-yellow); background: rgba(11, 61, 145, 0.2); }
-        .part-slot h4 { margin: 0; font-size: 0.6rem; color: var(--neon-yellow); }
-        .part-slot span { font-size: 0.65rem; color: var(--neon-cyan); }
+        .parts-inventory {
+            background: #010409; border: 1px solid #30363d; border-radius: 8px; padding: 10px;
+            display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: 260px;
+        }
+        .part-card {
+            background: #161b22; border: 1px solid #30363d; border-radius: 6px;
+            padding: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s;
+        }
+        .part-card:hover { border-color: var(--neon-cyan); background: #1f6feb22; }
+        .part-card img { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid var(--neon-cyan); }
+        .part-info h4 { margin: 0; font-size: 0.75rem; color: var(--neon-yellow); }
+        .part-info span { font-size: 0.65rem; color: #8b949e; }
 
-        .craft-preview {
-            background: #050811; border: 1px solid var(--neon-cyan);
-            border-radius: 6px; padding: 8px; text-align: center; margin-bottom: 8px;
+        .rocket-blueprint-area {
+            background: #010409; border: 2px dashed var(--nasa-blue); border-radius: 8px; padding: 10px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;
         }
-        .craft-preview h3 { margin: 0 0 4px 0; font-size: 0.7rem; color: var(--neon-yellow); text-transform: uppercase; }
-        .preview-screen { font-size: 1.5rem; letter-spacing: 5px; background: #000; padding: 5px; border-radius: 4px; margin-top: 4px; }
+        .blueprint-slots { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        .slot {
+            background: #161b22; border: 1px solid #30363d; padding: 6px 10px; border-radius: 6px;
+            font-size: 0.7rem; display: flex; justify-content: space-between; align-items: center; color: #8b949e;
+        }
+        .slot.filled { border-color: var(--success-green); color: var(--success-green); background: rgba(46, 160, 67, 0.1); }
 
-        .control-group { margin-bottom: 6px; }
-        label { font-size: 0.6rem; color: var(--neon-yellow); display: block; text-transform: uppercase; margin-bottom: 2px; }
-        select {
-            width: 100%; padding: 6px; background: #000; color: #fff;
-            border: 1px solid var(--nasa-blue); border-radius: 4px; font-size: 0.7rem; font-family: 'Courier New', Courier, monospace;
+        /* BUTTONS */
+        .btn-action {
+            background-color: var(--neon-yellow); color: #000; border: none;
+            padding: 10px; font-weight: bold; font-size: 0.8rem; border-radius: 6px;
+            cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px;
+            box-shadow: 0 0 15px rgba(210, 153, 34, 0.4); transition: 0.2s;
         }
-        .btn-nasa {
-            background-color: var(--nasa-blue); color: #fff; border: 1px solid var(--neon-cyan);
-            padding: 8px; font-size: 0.75rem; font-weight: bold; border-radius: 4px;
-            cursor: pointer; width: 100%; margin-top: 6px; text-transform: uppercase; letter-spacing: 1px;
+        .btn-action:hover { background-color: var(--neon-cyan); color: #fff; }
+
+        /* SIMULATION & LAUNCH SCREEN */
+        .launch-view {
+            width: 100%; height: 240px; background: linear-gradient(to top, #010409, #0b3d91);
+            border-radius: 8px; position: relative; overflow: hidden; border: 1px solid var(--neon-cyan);
+            display: flex; justify-content: center; align-items: center;
         }
-        .btn-nasa:hover { background-color: var(--neon-cyan); color: #000; }
-        .terminal-log {
+        .rocket-img {
+            position: absolute; bottom: 10px; width: 60px; transition: bottom 3s ease-in-out;
+        }
+        .terminal-box {
             background: #000; color: var(--neon-cyan); padding: 8px; border-radius: 6px;
-            font-size: 0.6rem; height: 150px; overflow-y: auto; border: 1px solid var(--nasa-blue); line-height: 1.3; text-align: left;
+            font-size: 0.65rem; height: 90px; overflow-y: auto; border: 1px solid var(--nasa-blue);
+            text-align: left; margin-top: 8px; line-height: 1.3;
         }
     </style>
 </head>
 <body>
 
-    <div class="game-console">
+    <div class="game-cockpit">
+        <!-- HEADER WITH LIVE STATS -->
         <header>
-            <div class="logo-title">NASA Mission Control</div>
-            <div class="team-badge">Sky_captains</div>
+            <div class="logo">🚀 NASA 3D SIMULATOR [Sky_captains]</div>
+            <div class="hud-stats" id="hudBar" style="display: none;">
+                <span>Budget: <b id="hudBudget">$100M</b></span>
+                <span>Mass: <b id="hudMass">50kg</b></span>
+                <span>Status: <b id="hudStatus" style="color:var(--neon-yellow)">STANDBY</b></span>
+            </div>
         </header>
 
-        <div class="hud-bar" id="topHud">
-            <div class="hud-item"><label>Budget Left</label><span id="hud-budget">$100M</span></div>
-            <div class="hud-item"><label>Total Mass</label><span id="hud-mass">0kg</span></div>
-            <div class="hud-item"><label>Flight Status</label><span id="hud-status" style="color:var(--neon-yellow)">STANDBY</span></div>
+        <!-- SCREEN 1: LOGIN / INTRO -->
+        <div id="screen-1" class="screen active" style="justify-content: center; align-items: center; text-align: center;">
+            <h2 style="font-size: 1.3rem; color: var(--neon-yellow);">SPACE MISSION COMMAND CENTER</h2>
+            <p style="max-width: 500px; margin: 10px auto;">Rotate your phone to landscape mode for the ultimate professional simulation experience. Balance mass, power, and budget to succeed[span_1](start_span)[span_1](end_span)!</p>
+            <button class="btn-action" style="max-width: 250px;" onclick="switchScreen(2)">INITIALIZE SYSTEM ➔</button>
         </div>
 
-        <!-- SCREEN 1: LOGIN -->
-        <div id="screen-1" class="screen-view active">
-            <div class="visual-card" style="background-image: url('https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=600');">
-                <div class="photo-caption">NASA Ground Station & Telemetry Center</div>
-            </div>
-            <h2>Flight Operations Entry</h2>
-            <p>Design, build, and simulate a complete science mission under strict engineering trade-offs[span_0](start_span)[span_0](end_span).</p>
-            <div class="control-group">
-                <label>Operational Mode:</label>
-                <select id="gameMode">
-                    <option value="solo">Solo Commander Mode</option>
-                    <option value="team">Collaborative Team Mode (4 Roles)[span_1](start_span)[span_1](end_span)</option>
-                </select>
-            </div>
-            <button class="btn-nasa" onclick="switchScreen(2)">Initialize Mission ➔</button>
+        <!-- SCREEN 2: SCENARIO SELECTION -->
+        <div id="screen-2" class="screen" style="justify-content: center; align-items: center; text-align: center;">
+            <h2>Select Scientific Mission Objective</h2>
+            <p>Choose an authentic NASA mission profile:</p>
+            <select id="missionType" style="max-width: 400px; padding: 8px; background: #010409; color: #fff; border: 1px solid var(--nasa-blue); border-radius: 6px; font-family: monospace; margin-bottom: 15px;">
+                <option value="bionutrients">BioNutrients-2 (ISS Yeast Experiment - Strict Mass Limits)</option>
+                <option value="punch">NASA PUNCH Mission (Sun Corona 3D Observation)</option>
+                <option value="dawn">Dawn Mission (Asteroid & Dwarf Planet Orbit)</option>
+            </select>
+            <button class="btn-action" style="max-width: 250px;" onclick="switchScreen(3)">NEXT: WELD & BUILD SPACECRAFT ➔</button>
         </div>
 
-        <!-- SCREEN 2: OBJECTIVE -->
-        <div id="screen-2" class="screen-view">
-            <div class="visual-card" style="background-image: url('https://images.unsplash.com/photo-1517976487492-5750f3195933?w=600');">
-                <div class="photo-caption">Spacecraft Integration Cleanroom Facility</div>
-            </div>
-            <h2>Select Mission Objective</h2>
-            <div class="control-group">
-                <label>Science Scenario:</label>
-                <select id="missionScenario" onchange="loadScenario()">
-                    <option value="bionutrients">BioNutrients-2 (ISS Research Mission)</option>
-                    <option value="punch">NASA PUNCH Mission (Sun 3D Corona)</option>
-                    <option value="dawn">Dawn Mission (Asteroid / Dwarf Planet)</option>
-                </select>
-            </div>
-            <p id="scenarioText" style="background: #000; padding: 6px; border-left: 3px solid var(--neon-yellow);"></p>
-            <button class="btn-nasa" onclick="switchScreen(3)">Next: Build Spacecraft ➔</button>
-        </div>
+        <!-- SCREEN 3: VISUAL ASSEMBLY & WELDING WORKBENCH -->
+        <div id="screen-3" class="screen">
+            <h2>Spacecraft Assembly Workbench (Tap parts to weld)</h2>
+            <div class="assembly-container">
+                <!-- Parts Inventory with Real Images -->
+                <div class="parts-inventory">
+                    <p style="margin:0 0 5px 0; text-align:left; font-size:0.7rem; color:var(--neon-cyan);">AVAILABLE COMPONENTS:</p>
+                    
+                    <div class="part-card" onclick="weldPart('camera', 'High-Res Optical Camera', 40, 15)">
+                        <img src="https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?w=100" alt="Camera">
+                        <div class="part-info">
+                            <h4>Optical Camera</h4>
+                            <span>Mass: 40kg | Cost: $15M</span>
+                        </div>
+                    </div>
 
-        <!-- SCREEN 3: ASSEMBLY WORKBENCH -->
-        <div id="screen-3" class="screen-view">
-            <h2>Engineering Assembly Workbench</h2>
-            <p>Click and pick your components to assemble the spacecraft[span_2](start_span)[span_2](end_span).</p>
-            <div class="craft-preview">
-                <h3>Assembled Spacecraft Preview</h3>
-                <div class="preview-screen" id="craftVisual">🛰️ [Empty]</div>
+                    <div class="part-card" onclick="weldPart('solar', 'Flexible Solar Array', 30, 20)">
+                        <img src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=100" alt="Solar">
+                        <div class="part-info">
+                            <h4>Solar Array</h4>
+                            <span>Mass: 30kg | Cost: $20M</span>
+                        </div>
+                    </div>
+
+                    <div class="part-card" onclick="weldPart('thruster', 'Ion Deep-Space Thruster', 50, 30)">
+                        <img src="https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=100" alt="Thruster">
+                        <div class="part-info">
+                            <h4>Ion Thruster</h4>
+                            <span>Mass: 50kg | Cost: $30M</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rocket Blueprint Blueprint (Welding Slots) -->
+                <div class="rocket-blueprint-area">
+                    <p style="margin:0 0 5px 0; font-size:0.7rem; color:var(--neon-yellow);">ROOCKET CHASSIS BLUEPRINT</p>
+                    <div class="blueprint-slots">
+                        <div class="slot filled"><span>🚀 Core Booster Chassis</span> <b>50kg</b></div>
+                        <div class="slot" id="slot-camera"><span>➕ Optical Camera</span> <b>Pending</b></div>
+                        <div class="slot" id="slot-solar"><span>➕ Solar Array</span> <b>Pending</b></div>
+                        <div class="slot" id="slot-thruster"><span>➕ Ion Thruster</span> <b>Pending</b></div>
+                    </div>
+                </div>
             </div>
-            <div class="assembly-grid">
-                <div class="part-slot" onclick="selectPart('bus', 'CubeSat Bus 3U', 20)">
-                    <h4>1. Structure</h4><span id="slot-bus">CubeSat Bus (20kg)</span>
-                </div>
-                <div class="part-slot" onclick="selectPart('payload', 'Advanced Camera', 50)">
-                    <h4>2. Instrument</h4><span id="slot-payload">Camera (50kg)</span>
-                </div>
-                <div class="part-slot" onclick="selectPart('power', 'Solar Arrays', 30)">
-                    <h4>3. Power</h4><span id="slot-power">Solar Panels (30kg)</span>
-                </div>
-                <div class="part-slot" onclick="selectPart('rocket', 'NG-18 Rocket', 100)">
-                    <h4>4. Launcher</h4><span id="slot-rocket">NG-18 (100kg)</span>
-                </div>
-            </div>
-            <button class="btn-nasa" onclick="launchRocketSimulation()">Verify & Launch Rocket 🚀</button>
+
+            <button class="btn-action" onclick="switchScreen(4)">PROCEED TO LAUNCH PAD 🚀</button>
         </div>
 
         <!-- SCREEN 4: LAUNCH & REAL NASA API TELEMETRY -->
-        <div id="screen-4" class="screen-view">
-            <div class="visual-card" style="background-image: url('https://images.unsplash.com/photo-1517976487492-5750f3195933?w=600');" id="launchPhoto">
-                <div class="photo-caption" id="launchCaption">Launch Pad Telemetry & Tracking</div>
+        <div id="screen-4" class="screen">
+            <h2>Live Flight Telemetry & NASA API Feed</h2>
+            <div style="display: flex; gap: 15px;">
+                <div class="launch-view" style="width: 45%;">
+                    <!-- Rocket Image that animates upwards -->
+                    <img id="rocketGraphic" class="rocket-img" src="https://images.unsplash.com/photo-1517976487492-5750f3195933?w=200" alt="Rocket">
+                </div>
+                <div style="flex-grow: 1; display: flex; flexDirection: column; justify-content: space-between;">
+                    <div class="terminal-box" id="telemetryLog">
+                        [SYSTEM READY] Launch pad armed. Awaiting authorization...<br>
+                    </div>
+                    <button class="btn-action" id="launchBtn" onclick="executeNasaLaunch()">AUTHORIZE & IGNITE 🔥</button>
+                    <button class="btn-action" id="resetBtn" style="background:var(--alert-red); color:#fff; display:none;" onclick="location.reload()">RESET MISSION ⟳</button>
+                </div>
             </div>
-            <h2>Live Flight Telemetry (NASA API Connected)</h2>
-            <div class="terminal-log" id="telemetryLog">
-                [SYSTEM] Ready for launch sequence...<br>
-            </div>
-            <button class="btn-nasa" id="resetBtn" onclick="resetGame()" style="background: var(--alert-red); display: none;">Reset Mission Control ⟳</button>
         </div>
     </div>
 
     <script>
-        let spacecraft = {
-            bus: { name: 'CubeSat Bus', mass: 20, icon: '📦' },
-            payload: { name: 'Camera', mass: 50, icon: '📷' },
-            power: { name: 'Solar Panels', mass: 30, icon: '⚡' },
-            rocket: { name: 'NG-18 Rocket', mass: 100, icon: '🚀' }
+        let craft = {
+            baseMass: 50,
+            budget: 100,
+            camera: false,
+            solar: false,
+            thruster: false
         };
 
-        function switchScreen(id) {
-            document.querySelectorAll('.screen-view').forEach(s => s.classList.remove('active'));
-            document.getElementById('screen-' + id).classList.add('active');
+        function switchScreen(screenNum) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-' + screenNum).classList.add('active');
             
-            if(id >= 2) {
-                document.getElementById('topHud').style.display = 'grid';
+            if(screenNum >= 2) {
+                document.getElementById('hudBar').style.display = 'flex';
                 updateHud();
             } else {
-                document.getElementById('topHud').style.display = 'none';
-            }
-            if(id === 2) loadScenario();
-            if(id === 3) updateCraftPreview();
-        }
-
-        function loadScenario() {
-            const val = document.getElementById('missionScenario').value;
-            const text = document.getElementById('scenarioText');
-            if(val === 'bionutrients') {
-                text.innerText = "Goal: Grow yeast on ISS under strict mass limits (<250g).";
-            } else if(val === 'punch') {
-                text.innerText = "Goal: Deploy 4 small satellites in LEO for Sun observation.";
-            } else if(val === 'dawn') {
-                text.innerText = "Goal: Planetary orbit mission to dwarf planets.";
+                document.getElementById('hudBar').style.display = 'none';
             }
         }
 
-        function selectPart(type, name, mass) {
-            if(type === 'bus') { spacecraft.bus = { name, mass, icon: '📦' }; document.getElementById('slot-bus').innerText = `${name} (${mass}kg)`; }
-            else if(type === 'payload') { spacecraft.payload = { name, mass, icon: '📷' }; document.getElementById('slot-payload').innerText = `${name} (${mass}kg)`; }
-            else if(type === 'power') { spacecraft.power = { name, mass, icon: '⚡' }; document.getElementById('slot-power').innerText = `${name} (${mass}kg)`; }
-            else if(type === 'rocket') { spacecraft.rocket = { name, mass, icon: '🚀' }; document.getElementById('slot-rocket').innerText = `${name} (${mass}kg)`; }
+        function weldPart(type, name, mass, cost) {
+            if(type === 'camera' && !craft.camera) {
+                craft.camera = true;
+                craft.baseMass += mass;
+                craft.budget -= cost;
+                document.getElementById('slot-camera').className = "slot filled";
+                document.getElementById('slot-camera').innerHTML = `<span>✔ ${name}</span> <b>${mass}kg</b>`;
+            } else if(type === 'solar' && !craft.solar) {
+                craft.solar = true;
+                craft.baseMass += mass;
+                craft.budget -= cost;
+                document.getElementById('slot-solar').className = "slot filled";
+                document.getElementById('slot-solar').innerHTML = `<span>✔ ${name}</span> <b>${mass}kg</b>`;
+            } else if(type === 'thruster' && !craft.thruster) {
+                craft.thruster = true;
+                craft.baseMass += mass;
+                craft.budget -= cost;
+                document.getElementById('slot-thruster').className = "slot filled";
+                document.getElementById('slot-thruster').innerHTML = `<span>✔ ${name}</span> <b>${mass}kg</b>`;
+            }
             updateHud();
-            updateCraftPreview();
-        }
-
-        function updateCraftPreview() {
-            document.getElementById('craftVisual').innerHTML = `${spacecraft.rocket.icon} ➔ ${spacecraft.bus.icon} ➔ ${spacecraft.power.icon} ➔ ${spacecraft.payload.icon}`;
         }
 
         function updateHud() {
-            let totalMass = spacecraft.bus.mass + spacecraft.payload.mass + spacecraft.power.mass + spacecraft.rocket.mass;
-            let budgetLeft = 100 - Math.floor(totalMass / 5);
-            document.getElementById('hud-mass').innerText = totalMass + "kg";
-            document.getElementById('hud-budget').innerText = "$" + budgetLeft + "M";
+            document.getElementById('hudBudget').innerText = "$" + craft.budget + "M";
+            document.getElementById('hudMass').innerText = craft.baseMass + "kg";
         }
 
-        // --- NASA API INTEGRATION FUNCTION ---
-        async function fetchRealNasaSpaceData() {
+        async function executeNasaLaunch() {
+            document.getElementById('launchBtn').style.display = 'none';
+            document.getElementById('hudStatus').innerText = "LIFTOFF";
+            document.getElementById('hudStatus').style.color = "var(--success-green)";
+            
             let terminal = document.getElementById('telemetryLog');
-            terminal.innerHTML += "[NASA API] Connecting to NASA Deep Space Network...<br>";
-
-            try {
-                let response = await fetch('https://api.nasa.gov/neo/rest/v1/feed?start_date=2026-03-25&end_date=2026-03-25&api_key=DEMO_KEY');
-                let data = await response.json();
-
-                let dateKey = Object.keys(data.near_earth_objects)[0];
-                let asteroid = data.near_earth_objects[dateKey][0];
-
-                let astName = asteroid.name;
-                let astDiameter = Math.round(asteroid.estimated_diameter.meters.estimated_diameter_max);
-                let isHazardous = asteroid.is_potentially_hazardous_asteroid;
-
-                terminal.innerHTML += `<span style="color:var(--neon-yellow)">[NASA LIVE DATA] Target Locked: ${astName}</span><br>`;
-                terminal.innerHTML += `[TELEMETRY] Object Size: ~${astDiameter}m | Hazard Risk: ${isHazardous ? 'HIGH' : 'LOW'}<br>`;
-                terminal.innerHTML += `[MISSION SUCCESS] Deep Space Orbit achieved & data downlinked[span_3](start_span)[span_3](end_span)!<br>`;
-            } catch (error) {
-                terminal.innerHTML += `<span style="color:var(--alert-red)">[NASA API NOTICE] Running standard telemetry lock (Offline fallback active).</span><br>`;
-                terminal.innerHTML += `[MISSION SUCCESS] Spacecraft deployed successfully[span_4](start_span)[span_4](end_span).<br>`;
-            }
-        }
-
-        function launchRocketSimulation() {
-            switchScreen(4);
-            const log = document.getElementById('telemetryLog');
-            const status = document.getElementById('hud-status');
-            const caption = document.getElementById('launchCaption');
+            let rocketImg = document.getElementById('rocketGraphic');
             
-            status.innerText = "LAUNCH";
-            status.style.color = "var(--neon-cyan)";
-            log.innerHTML = "[T-MINUS 3 SEC] Main engine ignition...<br>";
-            
-            setTimeout(() => {
-                log.innerHTML += "[LIFTOFF] Spacecraft clearing the tower[span_5](start_span)[span_5](end_span).<br>";
-                caption.innerText = "In-Flight Telemetry & Stage Separation";
-            }, 1000);
+            terminal.innerHTML += "[T-3 SEC] Main engine ignition sequence started...<br>";
+            rocketImg.style.bottom = "150px"; // Animate rocket up
 
-            setTimeout(() => {
-                fetchRealNasaSpaceData();
-                status.innerText = "SUCCESS";
-                status.style.color = "#00ff66";
-                caption.innerText = "Mission Accomplished - Deep Space";
+            setTimeout(async () => {
+                terminal.innerHTML += "[LIFTOFF] Rocket clearing the launch tower[span_2](start_span)[span_2](end_span)!<br>";
+                
+                // Fetching Real NASA API Data
+                terminal.innerHTML += "[NASA API] Connecting to NASA NeoWs Deep Space Network...<br>";
+                try {
+                    let response = await fetch('https://api.nasa.gov/neo/rest/v1/feed?start_date=2026-03-25&end_date=2026-03-25&api_key=DEMO_KEY');
+                    let data = await response.json();
+                    let dateKey = Object.keys(data.near_earth_objects)[0];
+                    let asteroid = data.near_earth_objects[dateKey][0];
+
+                    terminal.innerHTML += `<span style="color:var(--neon-yellow)">[TARGET LOCKED] Asteroid: ${asteroid.name}</span><br>`;
+                    terminal.innerHTML += `[TELEMETRY] Size: ~${Math.round(asteroid.estimated_diameter.meters.estimated_diameter_max)}m | Hazard: ${asteroid.is_potentially_hazardous_asteroid ? 'HIGH' : 'LOW'}<br>`;
+                    terminal.innerHTML += `<span style="color:var(--success-green)">[SUCCESS] Deep Space Orbit achieved & data downlinked[span_3](start_span)[span_3](end_span)!</span><br>`;
+                } catch(e) {
+                    terminal.innerHTML += `<span style="color:var(--success-green)">[MISSION SUCCESS] Spacecraft successfully deployed into target orbit[span_4](start_span)[span_4](end_span)!</span><br>`;
+                }
+
                 document.getElementById('resetBtn').style.display = 'block';
             }, 2500);
         }
-
-        function resetGame() {
-            document.getElementById('resetBtn').style.display = 'none';
-            document.getElementById('hud-status').innerText = "STANDBY";
-            document.getElementById('hud-status').style.color = "var(--neon-yellow)";
-            switchScreen(1);
-        }
-
-        loadScenario();
     </script>
 </body>
-                                            </html>
-                                            
+    </html>
+                
