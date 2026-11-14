@@ -36,63 +36,70 @@
             border: 3px solid var(--nasa-blue);
             border-radius: 12px;
             display: flex; flex-direction: column; justify-content: space-between;
-            padding: 15px;
-            box-shadow: 0 0 40px rgba(0, 240, 255, 0.3);
+            padding: 12px;
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.4);
             position: relative;
         }
 
-        .screen { display: none; flex-grow: 1; flex-direction: column; justify-content: center; align-items: center; height: 100%; }
+        .screen { display: none; flex-grow: 1; flex-direction: column; justify-content: center; align-items: center; height: 100%; position: relative; }
         .screen.active { display: flex; }
 
-        h2 { color: var(--neon-cyan); font-size: 1.1rem; margin: 0 0 10px 0; text-transform: uppercase; text-align: center; }
-        p { font-size: 0.75rem; color: #8b949e; text-align: center; margin: 0 0 10px 0; }
+        h2 { color: var(--neon-cyan); font-size: 1rem; margin: 0 0 6px 0; text-transform: uppercase; text-align: center; }
+        p { font-size: 0.7rem; color: #8b949e; text-align: center; margin: 0 0 6px 0; }
 
         /* BUTTONS */
         .btn-sci {
             background-color: var(--neon-yellow); color: #000; border: none;
-            padding: 10px 20px; font-weight: bold; font-size: 0.8rem; border-radius: 6px;
-            cursor: pointer; text-transform: uppercase; margin: 5px;
-            box-shadow: 0 0 12px rgba(243, 230, 0, 0.4); transition: 0.2s;
+            padding: 8px 18px; font-weight: bold; font-size: 0.75rem; border-radius: 6px;
+            cursor: pointer; text-transform: uppercase; margin: 4px;
+            box-shadow: 0 0 10px rgba(243, 230, 0, 0.4); transition: 0.2s;
         }
         .btn-sci:hover { background-color: var(--neon-cyan); color: #fff; }
 
-        /* 1. SPLASH SCREEN */
-        .splash-content { text-align: center; }
-        .solar-system-anim { font-size: 3.5rem; margin-bottom: 15px; animation: pulseSystem 3s infinite; }
-        @keyframes pulseSystem { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        /* SCREEN 1: SPLASH (splash-logo.png) */
+        .splash-banner { width: 100%; max-width: 380px; height: 180px; object-fit: contain; border-radius: 8px; border: 1px solid var(--nasa-blue); margin-bottom: 8px; }
 
-        /* 2. LOADING SCREEN */
-        .loading-bar-container { width: 60%; background: #000; border: 1px solid var(--neon-cyan); border-radius: 6px; height: 20px; padding: 2px; margin-top: 15px; }
-        .loading-bar-fill { width: 0%; height: 100%; background: var(--neon-cyan); border-radius: 4px; transition: width 0.1s linear; }
+        /* SCREEN 2: LOADING (loading-icon.png) */
+        .loading-banner { width: 100px; height: 100px; object-fit: contain; margin-bottom: 5px; animation: spinIcon 3s linear infinite; }
+        @keyframes spinIcon { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-bar-container { width: 60%; background: #000; border: 1px solid var(--neon-cyan); border-radius: 6px; height: 16px; padding: 2px; margin-top: 10px; }
+        .loading-bar-fill { width: 0%; height: 100%; background: var(--neon-cyan); border-radius: 4px; transition: width 0.05s linear; }
 
-        /* 3. MAIN MENU */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 450px; }
-        .menu-btn { background: #161b22; border: 1px solid var(--nasa-blue); color: #fff; padding: 12px; border-radius: 8px; font-size: 0.8rem; font-family: monospace; cursor: pointer; text-align: center; transition: 0.2s; }
+        /* SCREEN 3: MENU (menu-rocket.png) */
+        .menu-layout { display: flex; align-items: center; gap: 20px; }
+        .menu-banner { width: 180px; height: 180px; object-fit: contain; border-radius: 8px; }
+        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 8px; width: 240px; }
+        .menu-btn { background: #161b22; border: 1px solid var(--nasa-blue); color: #fff; padding: 10px; border-radius: 8px; font-size: 0.72rem; font-family: monospace; cursor: pointer; text-align: center; transition: 0.2s; }
         .menu-btn:hover { border-color: var(--neon-cyan); background: rgba(0, 240, 255, 0.1); }
 
-        /* 4. LEVELS SCREEN */
-        .levels-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; max-width: 600px; margin-top: 10px; }
-        .level-card { background: #161b22; border: 1px solid var(--nasa-blue); border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .level-card:hover { border-color: var(--neon-yellow); background: rgba(243, 230, 0, 0.1); }
+        /* SCREEN 4: LEVELS (level1.png, level2.png, level3.png) */
+        .levels-row { display: flex; gap: 15px; margin-top: 10px; }
+        .level-card-img { width: 140px; height: 90px; object-fit: cover; cursor: pointer; border: 2px solid var(--nasa-blue); border-radius: 8px; transition: 0.2s; background: #000; }
+        .level-card-img:hover { border-color: var(--neon-yellow); transform: scale(1.05); }
 
-        /* 5. MISSION DETAILS */
-        .mission-box { background: #010409; border: 1px solid #30363d; border-radius: 8px; padding: 15px; width: 100%; max-width: 600px; text-align: left; }
-        .mission-box ul { padding-left: 20px; font-size: 0.75rem; color: #c9d1d9; }
+        /* SCREEN 5: MISSION DETAILS (mission-earth.png) */
+        .mission-layout { display: flex; align-items: center; gap: 20px; max-width: 750px; background: #010409; border: 1px solid #30363d; border-radius: 8px; padding: 15px; }
+        .mission-banner { width: 220px; height: 150px; object-fit: cover; border-radius: 6px; border: 1px solid var(--neon-cyan); }
+        .mission-box ul { padding-left: 15px; font-size: 0.7rem; color: #c9d1d9; text-align: left; }
 
-        /* 6. ASSEMBLY WORKBENCH */
-        .assembly-layout { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 12px; width: 100%; height: 80%; }
-        .side-panel { background: #010409; border: 1px solid #30363d; border-radius: 8px; padding: 10px; font-size: 0.7rem; }
-        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; background: #161b22; padding: 6px; border-radius: 4px; }
-        .part-tile { background: #161b22; border: 1px solid #30363d; padding: 8px; border-radius: 6px; margin-bottom: 6px; cursor: pointer; text-align: center; font-size: 0.7rem; }
+        /* SCREEN 6: ASSEMBLY WORKBENCH (rocket-assembly.png) */
+        .assembly-layout { display: flex; align-items: center; gap: 15px; max-width: 850px; }
+        .assembly-banner { width: 350px; height: 200px; object-fit: contain; border-radius: 8px; border: 1px solid var(--nasa-blue); }
+        .side-panel { background: #010409; border: 1px solid #30363d; border-radius: 8px; padding: 10px; width: 220px; font-size: 0.68rem; text-align: left; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 6px; background: #161b22; padding: 5px; border-radius: 4px; }
+        .part-tile { background: #161b22; border: 1px solid #30363d; padding: 6px; border-radius: 6px; margin-bottom: 5px; cursor: pointer; text-align: center; font-size: 0.65rem; }
         .part-tile:hover { border-color: var(--neon-cyan); }
 
-        /* 7. SURFACE EXPLORATION GAMEPLAY */
-        .gameplay-hud { display: flex; justify-content: space-between; width: 100%; background: #000; padding: 8px 15px; border-radius: 6px; border: 1px solid var(--neon-cyan); font-size: 0.75rem; margin-bottom: 10px; }
-        .surface-arena { width: 100%; height: 260px; background: linear-gradient(to top, #111, #020617); border-radius: 8px; position: relative; border: 1px solid var(--nasa-blue); overflow: hidden; display: flex; justify-content: center; align-items: flex-end; }
-        .astronaut-sprite { font-size: 2.5rem; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); transition: 0.2s; }
+        /* SCREEN 7: SURFACE EXPLORATION GAMEPLAY (surface.png / asteroid-bg.png & astronaut.png) */
+        .gameplay-hud { display: flex; justify-content: space-between; width: 100%; max-width: 850px; background: #000; padding: 6px 15px; border-radius: 6px; border: 1px solid var(--neon-cyan); font-size: 0.7rem; margin-bottom: 6px; }
+        .surface-arena { width: 100%; max-width: 850px; height: 260px; background: url('asteroid-bg.png') center/cover no-repeat, #020617; border-radius: 8px; position: relative; border: 2px solid var(--neon-cyan); overflow: hidden; }
+        .astronaut-obj { position: absolute; bottom: 20px; left: 45%; width: 50px; height: 50px; object-fit: contain; transition: left 0.1s linear; }
+        .danger-alert-overlay { position: absolute; top: 10px; right: 10px; width: 50px; height: 50px; object-fit: contain; animation: blinkAlert 0.4s infinite alternate; display: none; }
+        @keyframes blinkAlert { 0% { opacity: 0.2; } 100% { opacity: 1; } }
 
-        /* 8 & 9. SCORECARD & RESULT */
-        .scorecard-box { background: #161b22; border: 1px solid var(--neon-cyan); border-radius: 8px; padding: 15px; width: 100%; max-width: 550px; text-align: left; font-size: 0.75rem; line-height: 1.4; }
+        /* SCREEN 8: SCORECARD RESULT (trophy.png) */
+        .scorecard-layout { display: flex; align-items: center; gap: 20px; max-width: 650px; background: #161b22; border: 1px solid var(--success-green); border-radius: 8px; padding: 15px; text-align: left; font-size: 0.72rem; line-height: 1.4; }
+        .trophy-img { width: 120px; height: 120px; object-fit: contain; }
     </style>
 </head>
 <body>
@@ -101,18 +108,17 @@
 
         <!-- 1. SPLASH SCREEN -->
         <div id="screen-splash" class="screen active">
-            <div class="splash-content">
-                <div class="solar-system-anim">🪐 ☀️ 🌍</div>
-                <h2 style="color:var(--neon-yellow);">NASA SPACE MISSION SIMULATOR</h2>
-                <p>Team: Sky_captains</p>
-                <button class="btn-sci" onclick="startLoading()">INITIALIZE ➔</button>
-            </div>
+            <img src="splash-logo.png" alt="Splash Screen" class="splash-banner" onerror="this.src='https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=600'">
+            <h2 style="color:var(--neon-yellow);">NASA SPACE MISSION SIMULATOR</h2>
+            <p>Team: Sky_captains</p>
+            <button class="btn-sci" onclick="startLoading()">INITIALIZE MISSION ➔</button>
         </div>
 
         <!-- 2. LOADING SCREEN -->
         <div id="screen-loading" class="screen">
-            <h2>Preparing Game Systems...</h2>
-            <p id="loadingText">Loading core modules: 0%</p>
+            <img src="loading-icon.png" alt="Loading Ring" class="loading-banner" onerror="this.src='https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=300'">
+            <h2 style="font-size: 0.9rem;">Preparing Game Systems...</h2>
+            <p id="loadingText" style="margin:2px;">Loading core modules: 0%</p>
             <div class="loading-bar-container">
                 <div class="loading-bar-fill" id="loadingFill"></div>
             </div>
@@ -120,47 +126,49 @@
 
         <!-- 3. MAIN MENU -->
         <div id="screen-menu" class="screen">
-            <h2 style="color:var(--neon-yellow);">NASA SPACE MISSION SIMULATOR</h2>
-            <div class="menu-grid" style="margin-top: 15px;">
-                <div class="menu-btn" onclick="goToScreen('screen-levels')">▶ Start Game</div>
-                <div class="menu-btn" onclick="alert('Settings: Audio [ON], Graphics [ULTRA], Controls [TOUCH]')">⚙️ Settings</div>
-                <div class="menu-btn" onclick="alert('Achievements Unlocked: Master Engineer, Deep Space Explorer!')">🏆 Achievement</div>
-                <div class="menu-btn" onclick="alert('Exiting simulation. Thank you for playing!')">❌ Quit</div>
+            <div class="menu-layout">
+                <img src="menu-rocket.png" alt="Menu Rocket" class="menu-banner" onerror="this.src='https://images.unsplash.com/photo-1517976487492-5750f3195933?w=300'">
+                <div>
+                    <h2 style="color:var(--neon-yellow); margin-bottom:10px; text-align: left;">MAIN MENU</h2>
+                    <div class="menu-grid">
+                        <div class="menu-btn" onclick="goToScreen('screen-levels')">▶ Start Game</div>
+                        <div class="menu-btn" onclick="alert('Settings: Audio [ON], Graphics [ULTRA 4K], Controls [TOUCH D-PAD]')">⚙️ Settings</div>
+                        <div class="menu-btn" onclick="alert('Achievements: Master Engineer, Deep Space Rover, Asteroid Dodger!')">🏆 Achievements</div>
+                        <div class="menu-btn" onclick="alert('Exiting simulation. Thank you for playing, Commander!')">❌ Quit Game</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- 4. LEVELS SELECTION -->
+        <!-- 4. LEVELS SCREEN -->
         <div id="screen-levels" class="screen">
             <h2>Select Mission Level</h2>
-            <div class="levels-grid">
-                <div class="level-card" onclick="goToScreen('screen-mission-details')">
-                    <h3>Level 1</h3>
-                    <p>Earth & Near-Orbit</p>
-                </div>
-                <div class="level-card" onclick="goToScreen('screen-mission-details')">
-                    <h3>Level 2</h3>
-                    <p>Lunar Base Setup</p>
-                </div>
-                <div class="level-card" onclick="goToScreen('screen-mission-details')">
-                    <h3>Level 3</h3>
-                    <p>Deep Asteroid Belt</p>
-                </div>
+            <p>Choose your operational tier:</p>
+            <div class="levels-row">
+                <img src="level1.png" alt="Level 1" class="level-card-img" onclick="selectLevel(1)" title="Level 1: Near Orbit" onerror="this.src='https://images.unsplash.com/photo-1614313913007-2b4ae8ce32d6?w=300'">
+                <img src="level2.png" alt="Level 2" class="level-card-img" onclick="selectLevel(2)" title="Level 2: Lunar Base" onerror="this.src='https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=300'">
+                <img src="level3.png" alt="Level 3" class="level-card-img" onclick="selectLevel(3)" title="Level 3: Deep Asteroid" onerror="this.src='https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=300'">
             </div>
-            <button class="btn-sci" style="margin-top: 15px;" onclick="goToScreen('screen-menu')">← Back to Menu</button>
+            <button class="btn-sci" style="margin-top:15px;" onclick="goToScreen('screen-menu')">← Back to Menu</button>
         </div>
 
         <!-- 5. MISSION DETAILS -->
         <div id="screen-mission-details" class="screen">
             <h2>Mission Details & Objectives</h2>
-            <div class="mission-box">
-                <p style="color:var(--neon-yellow); margin-bottom:5px;"><b>Target: Asteroid Deep-Scan & Sample Collection</b></p>
-                <ul>
-                    <li>1. Assemble spacecraft hull with proper fuel and thrust capacity.</li>
-                    <li>2. Navigate surface hazards and collect core geological samples.</li>
-                    <li>3. Avoid incoming asteroid debris and maintain power stability.</li>
-                </ul>
+            <div class="mission-layout">
+                <img src="mission-earth.png" alt="Mission Earth" class="mission-banner" onerror="this.src='https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=400'">
+                <div>
+                    <p style="color:var(--neon-yellow); margin-bottom:5px; text-align: left;"><b>Target: Asteroid Deep-Scan & Sample Collection</b></p>
+                    <div class="mission-box">
+                        <ul>
+                            <li>1. Assemble spacecraft hull with proper fuel and thrust capacity.</li>
+                            <li>2. Navigate surface hazards and collect core geological samples.</li>
+                            <li>3. Avoid incoming asteroid debris and maintain power stability.</li>
+                        </ul>
+                    </div>
+                    <button class="btn-sci" style="margin-top:10px; width:100%;" onclick="goToScreen('screen-assembly')">Proceed to Assembly ➔</button>
+                </div>
             </div>
-            <button class="btn-sci" style="margin-top: 15px;" onclick="goToScreen('screen-assembly')">Proceed to Assembly ➔</button>
         </div>
 
         <!-- 6. ASSEMBLY WORKBENCH -->
@@ -168,21 +176,18 @@
             <h2>Rocket Assembly Workbench</h2>
             <div class="assembly-layout">
                 <div class="side-panel">
-                    <p style="color:var(--neon-cyan);">SPACECRAFT STATS</p>
+                    <p style="color:var(--neon-cyan); margin:0 0 5px 0;">SPACECRAFT STATS</p>
                     <div class="stat-row"><span>Fuel:</span> <b id="statFuel">80%</b></div>
                     <div class="stat-row"><span>Damage:</span> <b id="statDamage">0%</b></div>
                     <div class="stat-row"><span>Speed:</span> <b id="statSpeed">1200 m/s</b></div>
                 </div>
-                <div class="side-panel" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-                    <div style="font-size: 3.5rem;">🚀</div>
-                    <p style="margin-top:5px; color:var(--neon-yellow);">Rocket Chassis Ready</p>
-                    <button class="btn-sci" onclick="startGameplay()">LAUNCH MISSION 🚀</button>
-                </div>
+                <img src="rocket-assembly.png" alt="Rocket Assembly" class="assembly-banner" onerror="this.src='https://images.unsplash.com/photo-1517976487492-5750f3195933?w=600'">
                 <div class="side-panel">
-                    <p style="color:var(--neon-cyan);">AVAILABLE PARTS</p>
+                    <p style="color:var(--neon-cyan); margin:0 0 5px 0;">AVAILABLE PARTS</p>
                     <div class="part-tile" onclick="upgradePart('camera')">📷 HD Camera (+10 Speed)</div>
                     <div class="part-tile" onclick="upgradePart('solar')">⚡ Solar Array (+15 Fuel)</div>
                     <div class="part-tile" onclick="upgradePart('shield')">🛡️ Shield (-10 Damage)</div>
+                    <button class="btn-sci" style="width:100%; margin-top:5px; background:var(--success-green);" onclick="goToScreen('screen-gameplay'); startSurfaceGameplay();">LAUNCH 🚀</button>
                 </div>
             </div>
         </div>
@@ -196,22 +201,31 @@
                 <span>Time: <b id="gameTimer">00:12:15</b></span>
             </div>
             <div class="surface-arena" id="surfaceArena">
-                <div class="astronaut-sprite" id="playerAstronaut">🧑‍🚀</div>
+                <!-- Astronaut sprite moving across -->
+                <img src="astronaut.png" alt="Astronaut" class="astronaut-obj" id="astronautObj" onerror="this.src='https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=100'">
+                <!-- Danger Alert Image -->
+                <img src="danger-alert.png" alt="Danger Alert" class="danger-alert-overlay" id="dangerAlertImg" onerror="this.style.display='none'">
             </div>
-            <div style="display:flex; gap:10px; margin-top:8px;">
-                <button class="btn-sci" onclick="movePlayer(-20)">◀ Move Left</button>
-                <button class="btn-sci" onclick="movePlayer(20)">Move Right ▶</button>
-                <button class="btn-sci" style="background:var(--success-green);" onclick="triggerMissionEnd(true)">Collect Sample & Complete</button>
+            <div style="display:flex; gap:12px; margin-top:8px;">
+                <button class="btn-sci" onclick="moveAstronaut(-35)">◀ Walk Left</button>
+                <button class="btn-sci" onclick="moveAstronaut(35)">Walk Right ▶</button>
+                <button class="btn-sci" style="background:var(--success-green);" onclick="completeMission(true)">Complete & Extract Sample 🧪</button>
             </div>
         </div>
 
-        <!-- 8 & 9. SCORECARD & RESULT -->
-        <div id="screen-result" class="screen">
-            <h2 id="resultTitle" style="color:var(--success-green);">MISSION SUCCESSFUL</h2>
-            <div class="scorecard-box" id="resultCardContent">
-                <!-- Filled via JS -->
+        <!-- 8. SCORECARD RESULT -->
+        <div id="screen-scorecard" class="screen">
+            <h2 id="scoreTitle" style="color:var(--success-green); margin-bottom:10px;">MISSION SUCCESSFUL</h2>
+            <div class="scorecard-layout">
+                <img src="trophy.png" alt="Trophy" class="trophy-img" onerror="this.src='https://images.unsplash.com/photo-1567427017947-545c5f2d16ad?w=200'">
+                <div>
+                    <h3 style="color:var(--neon-yellow); margin:0 0 5px 0;">FINAL SCORE: 9,850</h3>
+                    <div id="scorecardContent">
+                        <!-- Filled via JS -->
+                    </div>
+                </div>
             </div>
-            <button class="btn-sci" style="margin-top:15px;" onclick="location.reload()">PLAY AGAIN ⟳</button>
+            <button class="btn-sci" style="margin-top:12px;" onclick="location.reload()">PLAY AGAIN ⟳</button>
         </div>
 
     </div>
@@ -235,7 +249,13 @@
                     clearInterval(timer);
                     goToScreen('screen-menu');
                 }
-            }, 80);
+            }, 40);
+        }
+
+        let currentLevel = 1;
+        function selectLevel(lvl) {
+            currentLevel = lvl;
+            goToScreen('screen-mission-details');
         }
 
         let shipStats = { fuel: 80, damage: 0, speed: 1200 };
@@ -248,40 +268,41 @@
             document.getElementById('statSpeed').innerText = shipStats.speed + ' m/s';
         }
 
-        function startGameplay() {
-            goToScreen('screen-gameplay');
+        function startSurfaceGameplay() {
+            // Trigger hazard alert after 2 seconds based on danger-alert.png
+            setTimeout(() => {
+                let alertImg = document.getElementById('dangerAlertImg');
+                if(alertImg) alertImg.style.display = 'block';
+            }, 2000);
         }
 
-        let playerPos = 50;
-        function movePlayer(offset) {
-            playerPos = Math.max(10, Math.min(90, playerPos + (offset > 0 ? 5 : -5)));
-            document.getElementById('playerAstronaut').style.left = playerPos + '%';
+        let astronautX = 45; // percentage
+        function moveAstronaut(offset) {
+            astronautX = Math.max(5, Math.min(85, astronautX + (offset > 0 ? 5 : -5)));
+            document.getElementById('astronautObj').style.left = astronautX + '%';
         }
 
-        function triggerMissionEnd(success) {
-            goToScreen('screen-result');
-            let title = document.getElementById('resultTitle');
-            let content = document.getElementById('resultCardContent');
+        function completeMission(success) {
+            goToScreen('screen-scorecard');
+            let title = document.getElementById('scoreTitle');
+            let content = document.getElementById('scorecardContent');
 
             if(success) {
                 title.innerText = "MISSION SUCCESSFUL 🏆";
                 title.style.color = "var(--success-green)";
                 content.innerHTML = `
-                    <h3 style="color:var(--neon-yellow); margin:0 0 8px 0; text-align:center;">SCORE: 980 / 1000</h3>
-                    <p><b>Status:</b> Geological core samples successfully secured and transmitted to NASA Deep Space Network.</p>
-                    <p><b>Why it succeeded:</b> Optimal trade-off management between fuel efficiency (${shipStats.fuel}%) and structural integrity allowed safe surface navigation and return.</p>
+                    <p><b>Level ${currentLevel} Summary:</b> Navigated asteroid surface hazards safely, avoiding incoming debris using optimal trajectory[span_0](start_span)[span_0](end_span).</p>
+                    <p><b>Scientific Outcome:</b> Geological core samples successfully extracted and downlinked to NASA Ground Station[span_1](start_span)[span_1](end_span).</p>
                 `;
             } else {
                 title.innerText = "MISSION FAILED ⚠️";
                 title.style.color = "var(--alert-red)";
                 content.innerHTML = `
-                    <h3 style="color:var(--alert-red); margin:0 0 8px 0; text-align:center;">ASTEROID DEBRIS IMPACT</h3>
-                    <p><b>Status:</b> Critical hull failure due to unmanaged trajectory.</p>
-                    <p><b>Why it failed:</b> Structural shielding was insufficient against incoming space debris.</p>
+                    <p>Critical failure due to asteroid impact or power depletion.</p>
                 `;
             }
         }
     </script>
 </body>
-                                                                  </html>
-    
+                                                                                </html>
+                    
