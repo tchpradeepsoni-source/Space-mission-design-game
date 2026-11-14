@@ -2,191 +2,219 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Space Mission Design Game - NASA Space Apps 2026</title>
     <style>
         :root {
-            --brand-nearblack: #1b1b1b;
-            --brand-deepblue: #151622;
-            --brand-neonblue: #0050d8;
+            --brand-nearblack: #0b0c10;
+            --brand-deepblue: #1f2833;
+            --brand-neonblue: #66fcf1;
             --brand-neonyellow: #e7f434;
-            --brand-white: #fff;
-            --brand-nasared: #e52207;
+            --brand-white: #c5c6c7;
+            --brand-nasared: #ff007f;
         }
+        * { box-sizing: border-box; }
         body {
-            font-family: 'Fira Sans', sans-serif;
-            background-color: var(--brand-nearblack);
+            font-family: 'Courier New', Courier, monospace; /* Arcade / Retro tech look */
+            background-color: #000;
             color: var(--brand-white);
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Stops normal webpage scrolling */
         }
+
+        /* FIXED GAME CONTAINER (Like an arcade screen or mobile game window) */
+        .game-container {
+            width: 100%;
+            max-width: 420px;
+            height: 100%;
+            max-height: 750px;
+            background: var(--brand-deepblue);
+            border: 3px solid var(--brand-neonblue);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
+            box-shadow: 0 0 20px rgba(102, 252, 241, 0.3);
+            position: relative;
+        }
+
         header {
             text-align: center;
             border-bottom: 2px solid var(--brand-neonblue);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            padding-bottom: 8px;
         }
-        h1 { color: var(--brand-neonyellow); text-transform: uppercase; font-size: 1.5rem; margin: 0; }
-        
-        /* Game Screen Control */
-        .screen { display: none; }
-        .screen.active { display: block; }
+        h1 { color: var(--brand-neonyellow); font-size: 1.1rem; text-transform: uppercase; margin: 0; }
+        .team-tag { font-size: 0.7rem; color: var(--brand-neonblue); margin-top: 3px; }
 
+        /* HUD / RESOURCE BAR */
         .dashboard {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            background: var(--brand-deepblue);
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            gap: 6px;
+            background: #0b0c10;
+            padding: 8px;
+            border-radius: 6px;
             border: 1px solid var(--brand-neonblue);
         }
-        .resource-box {
-            background: rgba(0, 80, 216, 0.2);
-            padding: 6px;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .resource-box h4 { margin: 0; font-size: 0.75rem; color: var(--brand-neonyellow); }
-        .resource-box span { font-size: 0.95rem; font-weight: bold; }
+        .resource-box { text-align: center; }
+        .resource-box h4 { margin: 0; font-size: 0.65rem; color: var(--brand-neonyellow); text-transform: uppercase; }
+        .resource-box span { font-size: 0.85rem; font-weight: bold; color: #fff; }
 
-        .card {
-            background: var(--brand-deepblue);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #3d4551;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        /* SCREENS */
+        .screen {
+            display: none;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-in-out;
         }
-        h2 { color: var(--brand-neonblue); font-size: 1.2rem; text-transform: uppercase; margin-top: 0; }
+        .screen.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        h2 { color: var(--brand-neonblue); font-size: 1rem; text-transform: uppercase; margin-bottom: 10px; text-align: center; }
+        p { font-size: 0.8rem; text-align: center; line-height: 1.3; }
+
+        label { font-size: 0.75rem; color: var(--brand-neonyellow); margin-top: 8px; display: block; }
         
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            background: #000;
+            color: #fff;
+            border: 1px solid var(--brand-neonblue);
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
         button {
             background-color: var(--brand-neonyellow);
-            color: var(--brand-nearblack);
+            color: #000;
             border: none;
-            padding: 12px 20px;
-            font-size: 1rem;
+            padding: 10px;
+            font-size: 0.85rem;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
             width: 100%;
             margin-top: 15px;
-            transition: 0.2s;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(231, 244, 52, 0.3);
         }
-        button:hover { background-color: var(--brand-neonblue); color: var(--brand-white); }
-        
-        select, input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #8d9297;
-            background: #fff;
-            color: #000;
-            font-size: 1rem;
-        }
+        button:active { transform: scale(0.98); }
+
         .log-box {
             background: #000;
             color: #0ff;
-            padding: 12px;
+            padding: 10px;
             border-radius: 6px;
             font-family: monospace;
-            font-size: 0.85rem;
-            min-height: 120px;
-            max-height: 180px;
+            font-size: 0.7rem;
+            height: 180px;
             overflow-y: auto;
+            border: 1px solid #45a29e;
+            text-align: left;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Space Mission Design Game</h1>
-        <p style="margin: 5px 0 0; font-size: 0.85rem; color: #aaa;">NASA Space Apps 2026 | Team: Sky_captains</p>
-    </header>
+    <div class="game-container">
+        <!-- TOP HEADER -->
+        <header>
+            <h1>Space Mission Game</h1>
+            <div class="team-tag">NASA Space Apps 2026 | Team: Sky_captains</div>
+        </header>
 
-    <!-- RESOURCES DASHBOARD (Shows across game screens) -->
-    <div class="dashboard" id="globalDashboard" style="display: none;">
-        <div class="resource-box"><h4>Budget</h4><span id="res-budget">$100M</span></div>
-        <div class="resource-box"><h4>Mass</h4><span id="res-mass">50kg</span></div>
-        <div class="resource-box"><h4>Power</h4><span id="res-power">70W</span></div>
-    </div>
-
-    <!-- SCREEN 1: HOME & MODE SELECTION -->
-    <div id="screen-1" class="screen active card">
-        <h2>Welcome Commander!</h2>
-        <p>Experience real-world space mission design[span_6](start_span)[span_6](end_span), balancing mass, power, and budget to achieve science goals.</p>
-        
-        <label>Select Game Mode:</label>
-        <select id="gameMode">
-            <option value="solo">Single Player (Solo)</option>
-            <option value="team">Team Mode (4 Players: Planner, Engineer, Science, Comm)[span_7](start_span)[span_7](end_span)</option>
-        </select>
-
-        <button onclick="goToScreen(2)">Start Mission Planning ➔</button>
-    </div>
-
-    <!-- SCREEN 2: SELECT NASA MISSION SCENARIO -->
-    <div id="screen-2" class="screen card">
-        <h2>Select Science Mission Objective</h2>
-        
-        <label>Choose NASA Scenario:</label>
-        <select id="missionScenario" onchange="updateMissionDesc()">
-            <option value="bionutrients">BioNutrients-2 (ISS Experiment - Low Mass/Volume)[span_8](start_span)[span_8](end_span)[span_9](start_span)[span_9](end_span)[span_10](start_span)[span_10](end_span)</option>
-            <option value="punch">NASA PUNCH Mission (Sun Corona 3D Observation)[span_11](start_span)[span_11](end_span)</option>
-            <option value="dawn">Dawn Mission (Asteroid / Dwarf Planet Orbit)[span_12](start_span)[span_12](end_span)</option>
-        </select>
-        <p id="scenarioDesc" style="font-size: 0.85rem; color: #ccc; font-style: italic;"></p>
-
-        <button onclick="goToScreen(3)">Next: Assemble Spacecraft ➔</button>
-    </div>
-
-    <!-- SCREEN 3: SPACECRAFT & SEGMENTS ASSEMBLY -->
-    <div id="screen-3" class="screen card">
-        <h2>Spacecraft & Segment Assembly[span_13](start_span)[span_13](end_span)</h2>
-
-        <label>1. Payload / Science Instrument[span_14](start_span)[span_14](end_span):</label>
-        <select id="payloadSelect" onchange="calculateTradeOffs()">
-            <option value="standard">Standard Camera (Mass: +50kg, Cost: $20M)</option>
-            <option value="advanced">Advanced Spectrometer (Mass: +120kg, Cost: $45M)</option>
-            <option value="bio">BioNutrients Yeast Pack (Mass: +30kg, Cost: $15M)[span_15](start_span)[span_15](end_span)</option>
-        </select>
-
-        <label>2. Launch Vehicle[span_16](start_span)[span_16](end_span):</label>
-        <select id="rocketSelect" onchange="calculateTradeOffs()">
-            <option value="ng18">NG-18 Resupply (Capacity: 200kg)</option>
-            <option value="medium">Medium Lift Rocket (Capacity: 500kg)</option>
-            <option value="sls">SLS Heavy Lift[span_17](start_span)[span_17](end_span) (Capacity: 1500kg)</option>
-        </select>
-
-        <label>3. Target Orbit:</label>
-        <select id="orbitSelect">
-            <option value="leo">Low Earth Orbit (LEO)[span_18](start_span)[span_18](end_span)[span_19](start_span)[span_19](end_span)</option>
-            <option value="deep">Deep Space / Planetary[span_20](start_span)[span_20](end_span)</option>
-        </select>
-
-        <button onclick="launchSimulation()">Launch & Test Mission 🚀</button>
-    </div>
-
-    <!-- SCREEN 4: LIVE SIMULATION & REPORT -->
-    <div id="screen-4" class="screen card">
-        <h2>Mission Simulation & Report</h2>
-        <div class="log-box" id="simulationLog">
-            Initializing launch sequence...<br>
+        <!-- TOP HUD (Resources) -->
+        <div class="dashboard" id="globalDashboard" style="display: none;">
+            <div class="resource-box"><h4>Budget</h4><span id="res-budget">$100M</span></div>
+            <div class="resource-box"><h4>Mass</h4><span id="res-mass">50kg</span></div>
+            <div class="resource-box"><h4>Power</h4><span id="res-power">70W</span></div>
         </div>
 
-        <button onclick="resetGame()" style="background-color: #e52207; color: white;">Play Again ⟳</button>
+        <!-- SCREEN 1: HOME -->
+        <div id="screen-1" class="screen active">
+            <h2>Commander Login</h2>
+            <p>Design, manage, and simulate a complete NASA space mission under strict resource constraints.</p>
+            
+            <label>Select Game Mode:</label>
+            <select id="gameMode">
+                <option value="solo">Single Player (Solo)</option>
+                <option value="team">Team Mode (4 Players)[span_0](start_span)[span_0](end_span)</option>
+            </select>
+
+            <button onclick="goToScreen(2)">Initialize Mission ➔</button>
+        </div>
+
+        <!-- SCREEN 2: MISSION SCENARIO -->
+        <div id="screen-2" class="screen">
+            <h2>Select Objective</h2>
+            
+            <label>NASA Scenario:</label>
+            <select id="missionScenario" onchange="updateMissionDesc()">
+                <option value="bionutrients">BioNutrients-2 (ISS Experiment)[span_1](start_span)[span_1](end_span)[span_2](start_span)[span_2](end_span)[span_3](start_span)[span_3](end_span)</option>
+                <option value="punch">NASA PUNCH Mission (Sun 3D)[span_4](start_span)[span_4](end_span)</option>
+                <option value="dawn">Dawn Mission (Asteroid Orbit)[span_5](start_span)[span_5](end_span)</option>
+            </select>
+            <p id="scenarioDesc" style="color: #c5c6c7; font-style: italic; margin-top: 10px;"></p>
+
+            <button onclick="goToScreen(3)">Next: Build Spacecraft ➔</button>
+        </div>
+
+        <!-- SCREEN 3: ASSEMBLY -->
+        <div id="screen-3" class="screen">
+            <h2>Spacecraft Assembly</h2>
+
+            <label>1. Payload / Instrument[span_6](start_span)[span_6](end_span):</label>
+            <select id="payloadSelect" onchange="calculateTradeOffs()">
+                <option value="standard">Standard Camera (+50kg, $20M)</option>
+                <option value="advanced">Advanced Spectrometer (+120kg, $45M)</option>
+                <option value="bio">BioNutrients Yeast Pack (+30kg, $15M)[span_7](start_span)[span_7](end_span)</option>
+            </select>
+
+            <label>2. Launch Vehicle[span_8](start_span)[span_8](end_span):</label>
+            <select id="rocketSelect" onchange="calculateTradeOffs()">
+                <option value="ng18">NG-18 Resupply (Max 200kg)</option>
+                <option value="medium">Medium Rocket (Max 500kg)</option>
+                <option value="sls">SLS Heavy Lift[span_9](start_span)[span_9](end_span) (Max 1500kg)</option>
+            </select>
+
+            <label>3. Target Orbit:</label>
+            <select id="orbitSelect">
+                <option value="leo">Low Earth Orbit (LEO)[span_10](start_span)[span_10](end_span)[span_11](start_span)[span_11](end_span)</option>
+                <option value="deep">Deep Space / Planetary[span_12](start_span)[span_12](end_span)</option>
+            </select>
+
+            <button onclick="launchSimulation()">Launch Simulation 🚀</button>
+        </div>
+
+        <!-- SCREEN 4: SIMULATION -->
+        <div id="screen-4" class="screen">
+            <h2>Flight Telemetry</h2>
+            <div class="log-box" id="simulationLog">
+                [SYS] Power nominal...<br>
+            </div>
+
+            <button onclick="resetGame()" style="background-color: var(--brand-nasared); color: #fff; margin-top: 10px;">Abort / Play Again ⟳</button>
+        </div>
     </div>
 
     <script>
         function goToScreen(screenNumber) {
-            // Hide all screens
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            // Show target screen
             document.getElementById('screen-' + screenNumber).classList.add('active');
             
-            // Show dashboard only from screen 2 onwards
             if(screenNumber >= 2) {
                 document.getElementById('globalDashboard').style.display = 'grid';
             } else {
@@ -202,11 +230,11 @@
             const scenario = document.getElementById('missionScenario').value;
             const desc = document.getElementById('scenarioDesc');
             if(scenario === 'bionutrients') {
-                desc.innerText = "Goal: Grow yeast on ISS to produce target nutrients under strict mass & volume limits (<250g, <300mL)[span_21](start_span)[span_21](end_span)[span_22](start_span)[span_22](end_span)[span_23](start_span)[span_23](end_span).";
+                desc.innerText = "Goal: Grow yeast on ISS under strict mass & volume limits (<250g, <300mL)[span_13](start_span)[span_13](end_span)[span_14](start_span)[span_14](end_span)[span_15](start_span)[span_15](end_span).";
             } else if(scenario === 'punch') {
-                desc.innerText = "Goal: Use 4 small satellites in Low Earth Orbit for global 3D observation of the Sun's corona[span_24](start_span)[span_24](end_span).";
+                desc.innerText = "Goal: 4 small satellites in LEO for 3D observation of the Sun's corona[span_16](start_span)[span_16](end_span).";
             } else if(scenario === 'dawn') {
-                desc.innerText = "Goal: Explore planetary formation by orbiting small bodies and dwarf planets[span_25](start_span)[span_25](end_span).";
+                desc.innerText = "Goal: Orbit small bodies and dwarf planets to study planetary formation[span_17](start_span)[span_17](end_span).";
             }
         }
 
@@ -224,19 +252,19 @@
         function launchSimulation() {
             goToScreen(4);
             const log = document.getElementById('simulationLog');
-            log.innerHTML = "[INFO] Verifying mass and power constraints...<br>";
+            log.innerHTML = "[INFO] Running engineering checks...<br>";
             
             setTimeout(() => {
-                log.innerHTML += "[SUCCESS] Launch vehicle compatibility verified!<br>";
-            }, 800);
+                log.innerHTML += "[SUCCESS] Rocket payload capacity verified.<br>";
+            }, 700);
 
             setTimeout(() => {
-                log.innerHTML += "[EVENT] Solar radiation anomaly detected in orbit. Systems adjusting...<br>";
-            }, 1800);
+                log.innerHTML += "[EVENT] Solar radiation flare detected. Shields active.<br>";
+            }, 1500);
 
             setTimeout(() => {
-                log.innerHTML += "[COMPLETED] Mission Successful! Scientific data successfully downlinked to ground station.[span_26](start_span)[span_26](end_span)[span_27](start_span)[span_27](end_span)";
-            }, 2800);
+                log.innerHTML += "[COMPLETED] Mission Successful! Science objectives achieved.[span_18](start_span)[span_18](end_span)[span_19](start_span)[span_19](end_span)";
+            }, 2300);
         }
 
         function resetGame() {
@@ -246,4 +274,5 @@
         updateMissionDesc();
     </script>
 </body>
-</html>
+    </html>
+    
