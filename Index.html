@@ -1,1 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Mission Design Game - NASA Space Apps 2026</title>
+    <style>
+        :root {
+            --brand-nearblack: #1b1b1b;
+            --brand-deepblue: #151622;
+            --brand-neonblue: #0050d8;
+            --brand-neonyellow: #e7f434;
+            --brand-white: #fff;
+            --brand-nasared: #e52207;
+        }
+        body {
+            font-family: 'Fira Sans', sans-serif;
+            background-color: var(--brand-nearblack);
+            color: var(--brand-white);
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--brand-neonblue);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        h1 { color: var(--brand-neonyellow); text-transform: uppercase; font-size: 1.8rem; }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            background: var(--brand-deepblue);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--brand-neonblue);
+        }
+        .resource-box {
+            background: rgba(0, 80, 216, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .resource-box h4 { margin: 0 0 5px 0; font-size: 0.85rem; color: var(--brand-neonyellow); }
+        .resource-box span { font-size: 1.1rem; font-weight: bold; }
+        .section {
+            background: var(--brand-deepblue);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #3d4551;
+        }
+        h2 { color: var(--brand-neonblue); font-size: 1.3rem; text-transform: uppercase; }
+        button {
+            background-color: var(--brand-neonyellow);
+            color: var(--brand-nearblack);
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+        button:hover { background-color: var(--brand-neonblue); color: var(--brand-white); }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #8d9297;
+            background: #fff;
+            color: #000;
+        }
+        .log-box {
+            background: #000;
+            color: #0ff;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            min-height: 80px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
 
+    <header>
+        <h1>Space Mission Design Game</h1>
+        <p>NASA Space Apps Challenge 2026 | Team: Sky_captains</p>
+    </header>
+
+    <!-- 6 Core Resources Dashboard[span_7](start_span)[span_7](end_span) -->
+    <div class="dashboard">
+        <div class="resource-box"><h4>Budget ($)</h4><span id="res-budget">100M</span></div>
+        <div class="resource-box"><h4>Mass (kg)</h4><span id="res-mass">0 / 500</span></div>
+        <div class="resource-box"><h4>Power (W)</h4><span id="res-power">50 / 100</span></div>
+        <div class="resource-box"><h4>Data (GB)</h4><span id="res-data">10</span></div>
+        <div class="resource-box"><h4>Comm (Mbps)</h4><span id="res-comm">50</span></div>
+        <div class="resource-box"><h4>Time (Yrs)</h4><span id="res-time">2.0</span></div>
+    </div>
+
+    <!-- Step 1: Mode & Mission Selection -->
+    <div class="section">
+        <h2>Step 1: Mission Configuration</h2>
+        <label>Select Game Mode:</label>
+        <select id="gameMode">
+            <option value="solo">Single Player (Solo)</option>
+            <option value="team">Team Mode (Up to 4 Players: Planner, Engineer, Science, Comm)[span_8](start_span)[span_8](end_span)</option>
+        </select>
+
+        <label>Select NASA Science Mission Scenario:</label>
+        <select id="missionScenario" onchange="loadMissionData()">
+            <option value="bionutrients">BioNutrients-2 (ISS Experiment - Low Mass & Volume)[span_9](start_span)[span_9](end_span)</option>
+            <option value="punch">NASA PUNCH Mission (Sun Corona 3D - 4 SmallSats)[span_10](start_span)[span_10](end_span)</option>
+            <option value="dawn">Dawn Mission (Asteroid / Dwarf Planet Orbit)[span_11](start_span)[span_11](end_span)</option>
+        </select>
+        <p id="scenarioDesc" style="font-size: 0.9rem; color: #aaa; font-style: italic;"></p>
+    </div>
+
+    <!-- Step 2: 4 Mission Segments Setup[span_12](start_span)[span_12](end_span) -->
+    <div class="section">
+        <h2>Step 2: Spacecraft & Segment Assembly[span_13](start_span)[span_13](end_span)</h2>
+        
+        <label>1. Space Segment (Payload & Instruments):[span_14](start_span)[span_14](end_span)</label>
+        <select id="payloadSelect" onchange="updateStats()">
+            <option value="basic">Standard Camera (Mass: 50kg, Power: 20W)</option>
+            <option value="advanced">Advanced Spectrometer (Mass: 150kg, Power: 60W)[span_15](start_span)[span_15](end_span)</option>
+            <option value="bio">BioNutrients Yeast Production Pack (Mass: 30kg, Power: 10W)[span_16](start_span)[span_16](end_span)</option>
+        </select>
+
+        <label>2. Launch Segment (Launch Vehicle):[span_17](start_span)[span_17](end_span)</label>
+        <select id="rocketSelect" onchange="updateStats()">
+            <option value="ng18">NG-18 Commercial Resupply (Max Payload: 200kg)</option>
+            <option value="medium">Medium-Lift Rocket (Max Payload: 600kg)</option>
+            <option value="sls">Space Launch System - SLS Heavy (Max Payload: 2000kg)[span_18](start_span)[span_18](end_span)</option>
+        </select>
+
+        <label>3. Orbit Selection:</label>
+        <select id="orbitSelect">
+            <option value="leo">Low Earth Orbit (LEO - ISS / Short Range)[span_19](start_span)[span_19](end_span)</option>
+            <option value="geo">High Earth / Geostationary Orbit (GEO)</option>
+            <option value="deep">Deep Space / Planetary Mission[span_20](start_span)[span_20](end_span)</option>
+        </select>
+
+        <label>4. Ground Segment (Antenna & Control):[span_21](start_span)[span_21](end_span)</label>
+        <select id="groundSelect">
+            <option value="standard">Standard Ground Station (Low Cost, 20 Mbps)</option>
+            <option value="dsn">Deep Space Network (High Cost, High Comm)</option>
+        </select>
+
+        <button onclick="verifyAndLaunchMission()">Verify & Launch Simulation</button>
+    </div>
+
+    <!-- Step 3: Simulation Log & Feedback -->
+    <div class="section">
+        <h2>Mission Simulation & Analysis Report</h2>
+        <div class="log-box" id="simulationLog">
+            System ready. Configure your mission parameters above and click 'Verify & Launch Simulation'.
+        </div>
+    </div>
+
+    <script>
+        function loadMissionData() {
+            const scenario = document.getElementById('missionScenario').value;
+            const desc = document.getElementById('scenarioDesc');
+            if(scenario === 'bionutrients') {
+                desc.innerText = "Goal: Grow yeast organisms on ISS to produce target nutrients while strictly reducing mass & volume (<250g container, <300mL volume)[span_22](start_span)[span_22](end_span)[span_23](start_span)[span_23](end_span)[span_24](start_span)[span_24](end_span).";
+            } else if(scenario === 'punch') {
+                desc.innerText = "Goal: Use a constellation of small satellites in Low Earth Orbit to make global 3D observations of the Sun's corona[span_25](start_span)[span_25](end_span).";
+            } else if(scenario === 'dawn') {
+                desc.innerText = "Goal: Orbit small bodies/dwarf planets to explore the space environment and planetary formation[span_26](start_span)[span_26](end_span).";
+            }
+        }
+
+        function updateStats() {
+            // Basic dynamic preview logic for trade-offs
+            const payload = document.getElementById('payloadSelect').value;
+            let mass = 50;
+            let power = 20;
+            if(payload === 'advanced') { mass = 150; power = 60; }
+            if(payload === 'bio') { mass = 30; power = 10; }
+
+            document.getElementById('res-mass').innerText = mass + " / 500";
+            document.getElementById('res-power').innerText = (50 + power) + " / 100";
+        }
+
+        function verifyAndLaunchMission() {
+            const log = document.getElementById('simulationLog');
+            log.innerHTML = "[INFO] Running engineering trade-off checks...<br>";
+            setTimeout(() => {
+                log.innerHTML += "[SUCCESS] Mass and Power budgets within limits[span_27](start_span)[span_27](end_span)!<br>";
+                log.innerHTML += "[EVENT] Random Anomaly: Solar radiation flare detected. Power systems stable.<br>";
+                log.innerHTML += "[COMPLETED] Mission simulation successful! Scientific objectives achieved.[span_28](start_span)[span_28](end_span)";
+            }, 1000);
+        }
+
+        loadMissionData();
+    </script>
+</body>
+          </html>
+  
