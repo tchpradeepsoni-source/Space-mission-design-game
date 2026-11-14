@@ -20,7 +20,7 @@
             margin: 0; padding: 0;
             background-color: var(--bg-space);
             background-image: radial-gradient(white 1px, transparent 0);
-            background-size: 40px 40px;
+            background-size: 35px 35px;
             color: var(--text-main);
             font-family: 'Courier New', Courier, monospace;
             height: 100vh;
@@ -28,19 +28,15 @@
             overflow: hidden;
         }
 
-        /* LANDSCAPE COCKPIT WINDOW (Optimized for rotated phone / widescreen) */
-        .game-cockpit {
-            width: 95vw;
-            max-width: 900px;
-            height: 90vh;
-            max-height: 500px;
+        /* LANDSCAPE GAME COCKPIT */
+        .game-window {
+            width: 96vw; max-width: 920px;
+            height: 92vh; max-height: 510px;
             background: var(--panel-bg);
             border: 3px solid var(--nasa-blue);
             border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 15px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 12px;
             box-shadow: 0 0 40px rgba(31, 111, 235, 0.4);
             position: relative;
         }
@@ -48,260 +44,248 @@
         /* HEADER & HUD */
         header {
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--nasa-blue); padding-bottom: 8px;
+            border-bottom: 2px solid var(--nasa-blue); padding-bottom: 6px;
         }
-        .logo { color: var(--neon-yellow); font-weight: bold; font-size: 1rem; text-transform: uppercase; }
-        
+        .logo { color: var(--neon-yellow); font-weight: bold; font-size: 0.85rem; text-transform: uppercase; }
         .hud-stats {
-            display: flex; gap: 15px; background: #000; padding: 5px 15px;
-            border-radius: 6px; border: 1px solid var(--neon-cyan); font-size: 0.75rem;
+            display: flex; gap: 12px; background: #000; padding: 4px 12px;
+            border-radius: 6px; border: 1px solid var(--neon-cyan); font-size: 0.7rem;
         }
         .hud-stats span b { color: var(--neon-yellow); }
 
         /* SCREENS */
-        .screen { display: none; flex-grow: 1; flex-direction: column; margin-top: 10px; overflow-y: auto; }
+        .screen { display: none; flex-grow: 1; flex-direction: column; margin-top: 8px; overflow-y: auto; }
         .screen.active { display: flex; }
 
-        h2 { color: var(--neon-cyan); font-size: 0.95rem; margin: 0 0 8px 0; text-transform: uppercase; text-align: center; }
-        p { font-size: 0.75rem; color: #8b949e; text-align: center; margin: 0 0 10px 0; }
+        h2 { color: var(--neon-cyan); font-size: 0.85rem; margin: 0 0 6px 0; text-transform: uppercase; text-align: center; }
+        p { font-size: 0.7rem; color: #8b949e; text-align: center; margin: 0 0 8px 0; }
 
-        /* HORIZONTAL ASSEMBLY WORKBENCH GRID */
-        .assembly-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            flex-grow: 1;
+        /* ASSEMBLY WORKBENCH GRID */
+        .assembly-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-grow: 1;
         }
-        .parts-inventory {
-            background: #010409; border: 1px solid #30363d; border-radius: 8px; padding: 10px;
-            display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: 260px;
+        .inventory-box, .blueprint-box {
+            background: #010409; border: 1px solid #30363d; border-radius: 8px; padding: 8px;
+            display: flex; flex-direction: column; gap: 6px; max-height: 270px; overflow-y: auto;
         }
-        .part-card {
+        .part-item {
             background: #161b22; border: 1px solid #30363d; border-radius: 6px;
-            padding: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s;
+            padding: 6px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s;
         }
-        .part-card:hover { border-color: var(--neon-cyan); background: #1f6feb22; }
-        .part-card img { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid var(--neon-cyan); }
-        .part-info h4 { margin: 0; font-size: 0.75rem; color: var(--neon-yellow); }
-        .part-info span { font-size: 0.65rem; color: #8b949e; }
+        .part-item:hover { border-color: var(--neon-cyan); background: #1f6feb22; }
+        .part-item img { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid var(--neon-cyan); }
+        .part-detail h4 { margin: 0; font-size: 0.7rem; color: var(--neon-yellow); }
+        .part-detail span { font-size: 0.6rem; color: #8b949e; }
 
-        .rocket-blueprint-area {
-            background: #010409; border: 2px dashed var(--nasa-blue); border-radius: 8px; padding: 10px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;
+        .blueprint-slots { display: flex; flex-direction: column; gap: 5px; width: 100%; }
+        .bp-slot {
+            background: #161b22; border: 1px dashed #30363d; padding: 6px 8px; border-radius: 6px;
+            font-size: 0.65rem; display: flex; justify-content: space-between; align-items: center; color: #8b949e;
         }
-        .blueprint-slots { display: flex; flex-direction: column; gap: 6px; width: 100%; }
-        .slot {
-            background: #161b22; border: 1px solid #30363d; padding: 6px 10px; border-radius: 6px;
-            font-size: 0.7rem; display: flex; justify-content: space-between; align-items: center; color: #8b949e;
-        }
-        .slot.filled { border-color: var(--success-green); color: var(--success-green); background: rgba(46, 160, 67, 0.1); }
+        .bp-slot.welded { border-style: solid; border-color: var(--success-green); color: var(--success-green); background: rgba(46, 160, 67, 0.1); }
 
         /* BUTTONS */
-        .btn-action {
+        .btn-game {
             background-color: var(--neon-yellow); color: #000; border: none;
-            padding: 10px; font-weight: bold; font-size: 0.8rem; border-radius: 6px;
-            cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px;
-            box-shadow: 0 0 15px rgba(210, 153, 34, 0.4); transition: 0.2s;
+            padding: 9px; font-weight: bold; font-size: 0.75rem; border-radius: 6px;
+            cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 8px;
+            box-shadow: 0 0 10px rgba(210, 153, 34, 0.4); transition: 0.2s;
         }
-        .btn-action:hover { background-color: var(--neon-cyan); color: #fff; }
+        .btn-game:hover { background-color: var(--neon-cyan); color: #fff; }
 
-        /* SIMULATION & LAUNCH SCREEN */
-        .launch-view {
-            width: 100%; height: 240px; background: linear-gradient(to top, #010409, #0b3d91);
+        /* FLIGHT SKY ANIMATION SCREEN */
+        .sky-container {
+            width: 100%; height: 210px; background: linear-gradient(to top, #010409, #1f6feb);
             border-radius: 8px; position: relative; overflow: hidden; border: 1px solid var(--neon-cyan);
-            display: flex; justify-content: center; align-items: center;
+            display: flex; justify-content: center; align-items: flex-end;
         }
-        .rocket-img {
-            position: absolute; bottom: 10px; width: 60px; transition: bottom 3s ease-in-out;
+        .moving-rocket {
+            position: absolute; bottom: 10px; width: 55px; transition: bottom 3s ease-in-out;
         }
-        .terminal-box {
-            background: #000; color: var(--neon-cyan); padding: 8px; border-radius: 6px;
-            font-size: 0.65rem; height: 90px; overflow-y: auto; border: 1px solid var(--nasa-blue);
-            text-align: left; margin-top: 8px; line-height: 1.3;
+
+        /* SCORE & REASON CARD */
+        .score-card {
+            background: #161b22; border: 1px solid var(--neon-cyan); border-radius: 8px;
+            padding: 12px; text-align: left; font-size: 0.7rem; line-height: 1.4; margin-top: 5px;
         }
+        .score-card h3 { margin: 0 0 5px 0; color: var(--neon-yellow); font-size: 0.85rem; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div class="game-cockpit">
-        <!-- HEADER WITH LIVE STATS -->
+    <div class="game-window">
+        <!-- HEADER -->
         <header>
-            <div class="logo">🚀 NASA 3D SIMULATOR [Sky_captains]</div>
+            <div class="logo">🚀 NASA MISSION SIMULATOR [Sky_captains]</div>
             <div class="hud-stats" id="hudBar" style="display: none;">
-                <span>Budget: <b id="hudBudget">$100M</b></span>
-                <span>Mass: <b id="hudMass">50kg</b></span>
-                <span>Status: <b id="hudStatus" style="color:var(--neon-yellow)">STANDBY</b></span>
+                <span>BUDGET: <b id="hudBudget">$100M</b></span>
+                <span>TOTAL MASS: <b id="hudMass">60kg</b></span>
             </div>
         </header>
 
-        <!-- SCREEN 1: LOGIN / INTRO -->
+        <!-- SCREEN 1: START HOME -->
         <div id="screen-1" class="screen active" style="justify-content: center; align-items: center; text-align: center;">
-            <h2 style="font-size: 1.3rem; color: var(--neon-yellow);">SPACE MISSION COMMAND CENTER</h2>
-            <p style="max-width: 500px; margin: 10px auto;">Rotate your phone to landscape mode for the ultimate professional simulation experience. Balance mass, power, and budget to succeed[span_1](start_span)[span_1](end_span)!</p>
-            <button class="btn-action" style="max-width: 250px;" onclick="switchScreen(2)">INITIALIZE SYSTEM ➔</button>
+            <h2 style="font-size: 1.2rem; color: var(--neon-yellow);">SPACE MISSION DESIGN GAME</h2>
+            <p style="max-width: 450px; margin: 10px auto;">Rotate phone to Landscape mode. Touch real component photos to weld them onto your rocket blueprint, manage mass trade-offs, and launch[span_0](start_span)[span_0](end_span)!</p>
+            <button class="btn-game" style="max-width: 220px;" onclick="goToScreen(2)">START GAME ➔</button>
         </div>
 
-        <!-- SCREEN 2: SCENARIO SELECTION -->
-        <div id="screen-2" class="screen" style="justify-content: center; align-items: center; text-align: center;">
-            <h2>Select Scientific Mission Objective</h2>
-            <p>Choose an authentic NASA mission profile:</p>
-            <select id="missionType" style="max-width: 400px; padding: 8px; background: #010409; color: #fff; border: 1px solid var(--nasa-blue); border-radius: 6px; font-family: monospace; margin-bottom: 15px;">
-                <option value="bionutrients">BioNutrients-2 (ISS Yeast Experiment - Strict Mass Limits)</option>
-                <option value="punch">NASA PUNCH Mission (Sun Corona 3D Observation)</option>
-                <option value="dawn">Dawn Mission (Asteroid & Dwarf Planet Orbit)</option>
-            </select>
-            <button class="btn-action" style="max-width: 250px;" onclick="switchScreen(3)">NEXT: WELD & BUILD SPACECRAFT ➔</button>
-        </div>
-
-        <!-- SCREEN 3: VISUAL ASSEMBLY & WELDING WORKBENCH -->
-        <div id="screen-3" class="screen">
-            <h2>Spacecraft Assembly Workbench (Tap parts to weld)</h2>
-            <div class="assembly-container">
-                <!-- Parts Inventory with Real Images -->
-                <div class="parts-inventory">
-                    <p style="margin:0 0 5px 0; text-align:left; font-size:0.7rem; color:var(--neon-cyan);">AVAILABLE COMPONENTS:</p>
+        <!-- SCREEN 2: VISUAL ASSEMBLY WORKBENCH -->
+        <div id="screen-2" class="screen">
+            <h2>1. Assembly Workbench (Tap photo to weld onto rocket)</h2>
+            <div class="assembly-grid">
+                <!-- Real Photo Inventory -->
+                <div class="inventory-box">
+                    <p style="margin:0 0 4px 0; font-size:0.65rem; color:var(--neon-cyan);">AVAILABLE HARDWARE:</p>
                     
-                    <div class="part-card" onclick="weldPart('camera', 'High-Res Optical Camera', 40, 15)">
+                    <div class="part-item" onclick="weldPart('camera', 'High-Res Camera', 35, 15)">
                         <img src="https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?w=100" alt="Camera">
-                        <div class="part-info">
+                        <div class="part-detail">
                             <h4>Optical Camera</h4>
-                            <span>Mass: 40kg | Cost: $15M</span>
+                            <span>Mass: 35kg | Cost: $15M</span>
                         </div>
                     </div>
 
-                    <div class="part-card" onclick="weldPart('solar', 'Flexible Solar Array', 30, 20)">
+                    <div class="part-item" onclick="weldPart('solar', 'Solar Arrays', 30, 20)">
                         <img src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=100" alt="Solar">
-                        <div class="part-info">
-                            <h4>Solar Array</h4>
+                        <div class="part-detail">
+                            <h4>Solar Panels</h4>
                             <span>Mass: 30kg | Cost: $20M</span>
                         </div>
                     </div>
 
-                    <div class="part-card" onclick="weldPart('thruster', 'Ion Deep-Space Thruster', 50, 30)">
+                    <div class="part-item" onclick="weldPart('thruster', 'Ion Thruster', 45, 25)">
                         <img src="https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=100" alt="Thruster">
-                        <div class="part-info">
+                        <div class="part-detail">
                             <h4>Ion Thruster</h4>
-                            <span>Mass: 50kg | Cost: $30M</span>
+                            <span>Mass: 45kg | Cost: $25M</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Rocket Blueprint Blueprint (Welding Slots) -->
-                <div class="rocket-blueprint-area">
-                    <p style="margin:0 0 5px 0; font-size:0.7rem; color:var(--neon-yellow);">ROOCKET CHASSIS BLUEPRINT</p>
+                <!-- Rocket Blueprint Slots -->
+                <div class="blueprint-box">
+                    <p style="margin:0 0 4px 0; font-size:0.65rem; color:var(--neon-yellow);">ROCKET HULL BLUEPRINT</p>
                     <div class="blueprint-slots">
-                        <div class="slot filled"><span>🚀 Core Booster Chassis</span> <b>50kg</b></div>
-                        <div class="slot" id="slot-camera"><span>➕ Optical Camera</span> <b>Pending</b></div>
-                        <div class="slot" id="slot-solar"><span>➕ Solar Array</span> <b>Pending</b></div>
-                        <div class="slot" id="slot-thruster"><span>➕ Ion Thruster</span> <b>Pending</b></div>
+                        <div class="bp-slot welded"><span>🚀 Core Base Rocket</span> <b>60kg</b></div>
+                        <div class="bp-slot" id="slot-camera"><span>➕ Tap Camera to Weld</span> <b>Pending</b></div>
+                        <div class="bp-slot" id="slot-solar"><span>➕ Tap Solar to Weld</span> <b>Pending</b></div>
+                        <div class="bp-slot" id="slot-thruster"><span>➕ Tap Thruster to Weld</span> <b>Pending</b></div>
                     </div>
                 </div>
             </div>
-
-            <button class="btn-action" onclick="switchScreen(4)">PROCEED TO LAUNCH PAD 🚀</button>
+            <button class="btn-game" onclick="goToScreen(3)">PROCEED TO LAUNCH PAD 🚀</button>
         </div>
 
-        <!-- SCREEN 4: LAUNCH & REAL NASA API TELEMETRY -->
-        <div id="screen-4" class="screen">
-            <h2>Live Flight Telemetry & NASA API Feed</h2>
-            <div style="display: flex; gap: 15px;">
-                <div class="launch-view" style="width: 45%;">
-                    <!-- Rocket Image that animates upwards -->
-                    <img id="rocketGraphic" class="rocket-img" src="https://images.unsplash.com/photo-1517976487492-5750f3195933?w=200" alt="Rocket">
-                </div>
-                <div style="flex-grow: 1; display: flex; flexDirection: column; justify-content: space-between;">
-                    <div class="terminal-box" id="telemetryLog">
-                        [SYSTEM READY] Launch pad armed. Awaiting authorization...<br>
-                    </div>
-                    <button class="btn-action" id="launchBtn" onclick="executeNasaLaunch()">AUTHORIZE & IGNITE 🔥</button>
-                    <button class="btn-action" id="resetBtn" style="background:var(--alert-red); color:#fff; display:none;" onclick="location.reload()">RESET MISSION ⟳</button>
-                </div>
+        <!-- SCREEN 3: FLIGHT & LAUNCH ANIMATION -->
+        <div id="screen-3" class="screen">
+            <h2>2. Live Flight & NASA Telemetry Simulation</h2>
+            <div class="sky-container">
+                <img id="rocketAnimImg" class="moving-rocket" src="https://images.unsplash.com/photo-1517976487492-5750f3195933?w=200" alt="Rocket">
             </div>
+            <button class="btn-game" id="igniteBtn" onclick="runFlightSimulation()">AUTHORIZE & IGNITE ENGINE 🔥</button>
+        </div>
+
+        <!-- SCREEN 4: SCORE, REASON & RESULT -->
+        <div id="screen-4" class="screen" style="justify-content: center;">
+            <h2>Mission Evaluation Report</h2>
+            <div class="score-card" id="scoreReportCard">
+                <!-- Dynamically filled via JS -->
+            </div>
+            <button class="btn-game" onclick="location.reload()">PLAY AGAIN ⟳</button>
         </div>
     </div>
 
     <script>
-        let craft = {
-            baseMass: 50,
+        let gameState = {
+            mass: 60, // Base rocket mass
             budget: 100,
             camera: false,
             solar: false,
             thruster: false
         };
 
-        function switchScreen(screenNum) {
+        function goToScreen(num) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('screen-' + screenNum).classList.add('active');
-            
-            if(screenNum >= 2) {
+            document.getElementById('screen-' + num).classList.add('active');
+            if(num >= 2) {
                 document.getElementById('hudBar').style.display = 'flex';
-                updateHud();
+                updateHudDisplay();
             } else {
                 document.getElementById('hudBar').style.display = 'none';
             }
         }
 
         function weldPart(type, name, mass, cost) {
-            if(type === 'camera' && !craft.camera) {
-                craft.camera = true;
-                craft.baseMass += mass;
-                craft.budget -= cost;
-                document.getElementById('slot-camera').className = "slot filled";
+            if(type === 'camera' && !gameState.camera) {
+                gameState.camera = true;
+                gameState.mass += mass;
+                gameState.budget -= cost;
+                document.getElementById('slot-camera').className = "bp-slot welded";
                 document.getElementById('slot-camera').innerHTML = `<span>✔ ${name}</span> <b>${mass}kg</b>`;
-            } else if(type === 'solar' && !craft.solar) {
-                craft.solar = true;
-                craft.baseMass += mass;
-                craft.budget -= cost;
-                document.getElementById('slot-solar').className = "slot filled";
+            } else if(type === 'solar' && !gameState.solar) {
+                gameState.solar = true;
+                gameState.mass += mass;
+                gameState.budget -= cost;
+                document.getElementById('slot-solar').className = "bp-slot welded";
                 document.getElementById('slot-solar').innerHTML = `<span>✔ ${name}</span> <b>${mass}kg</b>`;
-            } else if(type === 'thruster' && !craft.thruster) {
-                craft.thruster = true;
-                craft.baseMass += mass;
-                craft.budget -= cost;
-                document.getElementById('slot-thruster').className = "slot filled";
+            } else if(type === 'thruster' && !gameState.thruster) {
+                gameState.thruster = true;
+                gameState.mass += mass;
+                gameState.budget -= cost;
+                document.getElementById('slot-thruster').className = "bp-slot welded";
                 document.getElementById('slot-thruster').innerHTML = `<span>✔ ${name}</span> <b>${mass}kg</b>`;
             }
-            updateHud();
+            updateHudDisplay();
         }
 
-        function updateHud() {
-            document.getElementById('hudBudget').innerText = "$" + craft.budget + "M";
-            document.getElementById('hudMass').innerText = craft.baseMass + "kg";
+        function updateHudDisplay() {
+            document.getElementById('hudBudget').innerText = "$" + gameState.budget + "M";
+            document.getElementById('hudMass').innerText = gameState.mass + "kg";
         }
 
-        async function executeNasaLaunch() {
-            document.getElementById('launchBtn').style.display = 'none';
-            document.getElementById('hudStatus').innerText = "LIFTOFF";
-            document.getElementById('hudStatus').style.color = "var(--success-green)";
+        function runFlightSimulation() {
+            document.getElementById('igniteBtn').style.display = 'none';
+            let rocket = document.getElementById('rocketAnimImg');
             
-            let terminal = document.getElementById('telemetryLog');
-            let rocketImg = document.getElementById('rocketGraphic');
-            
-            terminal.innerHTML += "[T-3 SEC] Main engine ignition sequence started...<br>";
-            rocketImg.style.bottom = "150px"; // Animate rocket up
+            // Rocket moves up
+            rocket.style.bottom = "140px";
 
-            setTimeout(async () => {
-                terminal.innerHTML += "[LIFTOFF] Rocket clearing the launch tower[span_2](start_span)[span_2](end_span)!<br>";
-                
-                // Fetching Real NASA API Data
-                terminal.innerHTML += "[NASA API] Connecting to NASA NeoWs Deep Space Network...<br>";
-                try {
-                    let response = await fetch('https://api.nasa.gov/neo/rest/v1/feed?start_date=2026-03-25&end_date=2026-03-25&api_key=DEMO_KEY');
-                    let data = await response.json();
-                    let dateKey = Object.keys(data.near_earth_objects)[0];
-                    let asteroid = data.near_earth_objects[dateKey][0];
+            setTimeout(() => {
+                // Physics check: If total mass exceeds 130kg or budget is negative, it BLASTS!
+                let isSuccess = gameState.mass <= 130 && gameState.budget >= 0;
 
-                    terminal.innerHTML += `<span style="color:var(--neon-yellow)">[TARGET LOCKED] Asteroid: ${asteroid.name}</span><br>`;
-                    terminal.innerHTML += `[TELEMETRY] Size: ~${Math.round(asteroid.estimated_diameter.meters.estimated_diameter_max)}m | Hazard: ${asteroid.is_potentially_hazardous_asteroid ? 'HIGH' : 'LOW'}<br>`;
-                    terminal.innerHTML += `<span style="color:var(--success-green)">[SUCCESS] Deep Space Orbit achieved & data downlinked[span_3](start_span)[span_3](end_span)!</span><br>`;
-                } catch(e) {
-                    terminal.innerHTML += `<span style="color:var(--success-green)">[MISSION SUCCESS] Spacecraft successfully deployed into target orbit[span_4](start_span)[span_4](end_span)!</span><br>`;
+                if(!isSuccess) {
+                    rocket.src = "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=200"; // Explosion effect look
+                    rocket.style.transform = "scale(1.4)";
                 }
 
-                document.getElementById('resetBtn').style.display = 'block';
+                setTimeout(() => {
+                    showScorecard(isSuccess);
+                }, 1500);
             }, 2500);
+        }
+
+        function showScorecard(success) {
+            goToScreen(4);
+            let card = document.getElementById('scoreReportCard');
+            
+            if(success) {
+                card.innerHTML = `
+                    <h3 style="color:var(--success-green);">🌟 MISSION SUCCESSFUL (Score: 95/100)</h3>
+                    <p><b>Status:</b> Spacecraft successfully deployed into Deep Space orbit[span_1](start_span)[span_1](end_span).</p>
+                    <p><b>Why it passed:</b> Total mass (${gameState.mass}kg) and budget ($${gameState.budget}M remaining) stayed strictly within NASA launch limits. Trade-offs were perfectly balanced!</p>
+                    <p><b>NASA API Data Feed:</b> Target asteroid telemetry successfully downlinked to ground station[span_2](start_span)[span_2](end_span).</p>
+                `;
+            } else {
+                card.innerHTML = `
+                    <h3 style="color:var(--alert-red);">💥 MISSION FAILED - ROCKET EXPLODED (Score: 20/100)</h3>
+                    <p><b>Status:</b> Structural overload in upper atmosphere.</p>
+                    <p><b>Why it failed:</b> Total mass (${gameState.mass}kg) exceeded the rocket thrust capacity limit (130kg), causing atmospheric drag overload and structural failure.</p>
+                    <p><b>Lesson:</b> Redesign your spacecraft in the assembly workbench and keep your mass lower next time[span_3](start_span)[span_3](end_span)!</p>
+                `;
+            }
         }
     </script>
 </body>
-    </html>
-                
+</html>
