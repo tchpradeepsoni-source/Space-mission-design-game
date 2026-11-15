@@ -370,4 +370,115 @@
             btnElem.classList.add('selected');
 
             // Correct replacement logic ensuring
-        
+         // Correct replacement logic ensuring accurate mass and budget recalculation
+            game.selectedParts[seg] = { name, mass, power, budget, data };
+            updateHud();
+        }
+
+        function runLaunchVerification() {
+            if(game.currentMass > game.maxMassLimit) {
+                alert(`[LAUNCH ABORT] Total Mass (${game.currentMass}kg) exceeds ${game.levelName} limit (${game.maxMassLimit}kg)! Reconfigure your payload.`);
+                return;
+            }
+            if(game.currentBudget < 0) {
+                alert(`[LAUNCH ABORT] Budget deficit ($${game.currentBudget}M). Mission unviable.`);
+                return;
+            }
+            goTo('screen-sim');
+            startCanvasSimulation();
+        }
+
+        function startCanvasSimulation() {
+            const canvas = document.getElementById('simCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+
+            let rocketY = canvas.height - 40;
+            let phase = 'liftoff';
+            let animId;
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(canvas.width * 0.2, canvas.height * 0.1, 2, 2);
+                ctx.fillRect(canvas.width * 0.7, canvas.height * 0.3, 2, 2);
+                ctx.fillRect(canvas.width * 0.4, canvas.height * 0.6, 1, 1);
+
+                if(phase === 'liftoff') {
+                    ctx.fillStyle = '#1d4ed8';
+                    ctx.beginPath();
+                    ctx.arc(canvas.width / 2, canvas.height + 300, 350, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.fillStyle = '#f3e600';
+                ctx.fillRect(canvas.width / 2 - 8, rocketY, 16, 40);
+                
+                if(phase === 'liftoff' || phase === 'orbit') {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.moveTo(canvas.width / 2 - 8, rocketY + 40);
+                    ctx.lineTo(canvas.width / 2, rocketY + 60);
+                    ctx.lineTo(canvas.width / 2 + 8, rocketY + 40);
+                    ctx.fill();
+                }
+
+                if(phase === 'liftoff') {
+                    rocketY -= 2;
+                    if(rocketY < canvas.height / 2) {
+                        phase = 'anomaly';
+                        setTimeout(() => {
+                            document.getElementById('anomalyModal').style.display = 'block';
+                        }, 400);
+                    }
+                }
+
+                if(phase === 'success' || phase === 'orbit') {
+                    ctx.strokeStyle = '#38bdf8';
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.arc(canvas.width / 2, canvas.height / 2, 70, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                if(phase !== 'paused') {
+                    animId = requestAnimationFrame(draw);
+                }
+            }
+            draw();
+            window.simCancel = () => cancelAnimationFrame(animId);
+        }
+
+        function resolveAnomaly(survived) {
+            document.getElementById('anomalyModal').style.display = 'none';
+            game.anomalyResolved = survived;
+            if(!survived) {
+                game.currentPower = 0;
+                game.currentData = 0;
+            }
+            document.getElementById('proceedScoreBtn').style.display = 'block';
+        }
+
+        function showScorecard() {
+            if(window.simCancel) window.simCancel();
+            goTo('screen-score');
+            const report = document.getElementById('scoreReport');
+            
+            let passed = game.anomalyResolved !== false && game.currentMass <= game.maxMassLimit;
+            let score = passed ? 960 : 320;
+
+            report.innerHTML = `
+                <h3 style="color:${passed ? 'var(--success-green)' : 'var(--alert-red)'};">
+                    ${passed ? '🌟 MISSION SUCCESSFUL (Score: ' + score + '/1000)' : '⚠️ MISSION FAILED / CRITICAL ANOMALY'}
+                </h3>
+                <p><b>Mode:</b> ${game.mode} | <b>Category:</b> ${game.category} | <b>Level:</b> ${game.levelName}</p>
+                <p><b>Trade-off Analysis:</b> Total Mass: ${game.currentMass}kg (Limit: ${game.maxMassLimit}kg), Power: ${game.currentPower}W, Budget: $${game.currentBudget}M.</p>
+                <p><b>Scientific Outcome:</b> ${passed ? 'Payload successfully deployed. Telemetry downlinked via NASA Ground Station[span_1](start_span)[span_1](end_span).' : 'Spacecraft disabled due to unmanaged solar storm anomaly or mass overload.'}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
