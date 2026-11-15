@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NASA Space Mission Simulator - Team Sky_captains</title>
+    <title>NASA Deep Space Advanced Simulator - Team Sky_captains</title>
     <style>
         :root {
             --bg-space: #01030d;
-            --panel-bg: #0d1117;
-            --nasa-blue: #0b3d91;
-            --neon-cyan: #00f0ff;
-            --neon-yellow: #f3e600;
-            --alert-red: #ff3366;
-            --success-green: #00ff66;
-            --text-main: #f0f6fc;
+            --panel-bg: #0b0f19;
+            --nasa-blue: #1d4ed8;
+            --neon-cyan: #38bdf8;
+            --neon-yellow: #facc15;
+            --alert-red: #ef4444;
+            --success-green: #22c55e;
+            --text-main: #f3f4f6;
         }
         * { box-sizing: border-box; user-select: none; }
         body {
             margin: 0; padding: 0;
             background-color: var(--bg-space);
-            background-image: radial-gradient(white 1px, transparent 0);
-            background-size: 35px 35px;
+            background-image: radial-gradient(rgba(56, 189, 248, 0.12) 1px, transparent 0);
+            background-size: 30px 30px;
             color: var(--text-main);
             font-family: 'Courier New', Courier, monospace;
             height: 100vh; width: 100vw;
@@ -28,281 +28,371 @@
             overflow: hidden;
         }
 
-        /* WIDESCREEN LANDSCAPE GAME WINDOW */
-        .game-frame {
+        .simulator-container {
             width: 98vw; height: 96vh;
             max-width: 1024px; max-height: 576px;
             background: var(--panel-bg);
-            border: 3px solid var(--nasa-blue);
+            border: 2px solid var(--nasa-blue);
             border-radius: 12px;
             display: flex; flex-direction: column; justify-content: space-between;
             padding: 12px;
-            box-shadow: 0 0 40px rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 40px rgba(29, 78, 216, 0.4);
             position: relative;
         }
 
-        .screen { display: none; flex-grow: 1; flex-direction: column; justify-content: center; align-items: center; height: 100%; position: relative; }
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--nasa-blue); padding-bottom: 6px;
+        }
+        .logo { color: var(--neon-yellow); font-weight: bold; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* 6 METERS HUD BAR */
+        .hud-metrics {
+            display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;
+            background: #020617; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--neon-cyan);
+            font-size: 0.62rem; text-align: center;
+        }
+        .hud-metric-item span { display: block; font-size: 0.52rem; color: #9ca3af; text-transform: uppercase; }
+        .hud-metric-item b { color: var(--neon-yellow); font-size: 0.68rem; }
+
+        .screen { display: none; flex-grow: 1; flex-direction: column; margin-top: 8px; overflow-y: auto; }
         .screen.active { display: flex; }
 
-        h2 { color: var(--neon-cyan); font-size: 1rem; margin: 0 0 6px 0; text-transform: uppercase; text-align: center; }
-        p { font-size: 0.7rem; color: #8b949e; text-align: center; margin: 0 0 6px 0; }
+        h2 { color: var(--neon-cyan); font-size: 0.85rem; margin: 0 0 6px 0; text-transform: uppercase; text-align: center; }
+        p { font-size: 0.68rem; color: #9ca3af; text-align: center; margin: 0 0 6px 0; }
 
         /* BUTTONS */
-        .btn-sci {
+        .btn-nasa {
             background-color: var(--neon-yellow); color: #000; border: none;
-            padding: 8px 18px; font-weight: bold; font-size: 0.75rem; border-radius: 6px;
-            cursor: pointer; text-transform: uppercase; margin: 4px;
-            box-shadow: 0 0 10px rgba(243, 230, 0, 0.4); transition: 0.2s;
+            padding: 8px; font-weight: bold; font-size: 0.72rem; border-radius: 6px;
+            cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 5px;
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.3); transition: 0.2s;
         }
-        .btn-sci:hover { background-color: var(--neon-cyan); color: #fff; }
+        .btn-nasa:hover { background-color: var(--neon-cyan); color: #000; }
 
-        /* SCREEN 1: SPLASH (splash-logo.png) */
-        .splash-banner { width: 100%; max-width: 380px; height: 180px; object-fit: contain; border-radius: 8px; border: 1px solid var(--nasa-blue); margin-bottom: 8px; }
+        /* GRID SELECTORS */
+        .grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .grid-card {
+            background: #020617; border: 1px solid #1e293b; border-radius: 8px; padding: 10px;
+            text-align: center; cursor: pointer; transition: 0.2s;
+        }
+        .grid-card:hover { border-color: var(--neon-cyan); background: rgba(29, 78, 216, 0.15); transform: translateY(-2px); }
+        .grid-card h4 { margin: 0 0 4px 0; color: var(--neon-yellow); font-size: 0.75rem; }
+        .grid-card span { font-size: 0.6rem; color: #9ca3af; }
 
-        /* SCREEN 2: LOADING (loading-icon.png) */
-        .loading-banner { width: 100px; height: 100px; object-fit: contain; margin-bottom: 5px; animation: spinIcon 3s linear infinite; }
-        @keyframes spinIcon { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .loading-bar-container { width: 60%; background: #000; border: 1px solid var(--neon-cyan); border-radius: 6px; height: 16px; padding: 2px; margin-top: 10px; }
-        .loading-bar-fill { width: 0%; height: 100%; background: var(--neon-cyan); border-radius: 4px; transition: width 0.05s linear; }
+        /* ASSEMBLY WORKBENCH 4 SEGMENTS */
+        .assembly-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; flex-grow: 1; margin-top: 5px; }
+        .segment-box { background: #020617; border: 1px solid #1e293b; border-radius: 6px; padding: 8px; overflow-y: auto; max-height: 300px; }
+        .segment-box h4 { color: var(--neon-cyan); font-size: 0.68rem; margin: 0 0 6px 0; border-bottom: 1px dashed #1e293b; padding-bottom: 3px; }
+        .comp-btn {
+            background: #0f172a; border: 1px solid #334155; color: #fff; padding: 5px; border-radius: 4px;
+            font-size: 0.58rem; font-family: monospace; cursor: pointer; margin-bottom: 4px; width: 100%; text-align: left;
+        }
+        .comp-btn:hover { border-color: var(--neon-cyan); background: rgba(56, 189, 248, 0.1); }
+        .comp-btn.selected { border-color: var(--success-green); background: rgba(34, 197, 94, 0.15); color: var(--success-green); }
 
-        /* SCREEN 3: MENU (menu-rocket.png) */
-        .menu-layout { display: flex; align-items: center; gap: 20px; }
-        .menu-banner { width: 180px; height: 180px; object-fit: contain; border-radius: 8px; }
-        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 8px; width: 240px; }
-        .menu-btn { background: #161b22; border: 1px solid var(--nasa-blue); color: #fff; padding: 10px; border-radius: 8px; font-size: 0.72rem; font-family: monospace; cursor: pointer; text-align: center; transition: 0.2s; }
-        .menu-btn:hover { border-color: var(--neon-cyan); background: rgba(0, 240, 255, 0.1); }
+        /* SIMULATION CANVAS & ANOMALY */
+        .sim-arena { width: 100%; height: 260px; background: #000; border-radius: 8px; border: 1px solid var(--neon-cyan); position: relative; overflow: hidden; margin-bottom: 6px; }
+        canvas { width: 100%; height: 100%; display: block; }
+        
+        .anomaly-modal {
+            position: absolute; top: 20%; left: 15%; width: 70%; background: rgba(11, 15, 25, 0.95);
+            border: 2px solid var(--alert-red); border-radius: 8px; padding: 15px; text-align: center; display: none;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.6); z-index: 10;
+        }
+        .anomaly-modal h3 { color: var(--alert-red); margin: 0 0 5px 0; font-size: 0.85rem; }
 
-        /* SCREEN 4: LEVELS (level1.png, level2.png, level3.png) */
-        .levels-row { display: flex; gap: 15px; margin-top: 10px; }
-        .level-card-img { width: 140px; height: 90px; object-fit: cover; cursor: pointer; border: 2px solid var(--nasa-blue); border-radius: 8px; transition: 0.2s; background: #000; }
-        .level-card-img:hover { border-color: var(--neon-yellow); transform: scale(1.05); }
-
-        /* SCREEN 5: MISSION DETAILS (mission-earth.png) */
-        .mission-layout { display: flex; align-items: center; gap: 20px; max-width: 750px; background: #010409; border: 1px solid #30363d; border-radius: 8px; padding: 15px; }
-        .mission-banner { width: 220px; height: 150px; object-fit: cover; border-radius: 6px; border: 1px solid var(--neon-cyan); }
-        .mission-box ul { padding-left: 15px; font-size: 0.7rem; color: #c9d1d9; text-align: left; }
-
-        /* SCREEN 6: ASSEMBLY WORKBENCH (rocket-assembly.png) */
-        .assembly-layout { display: flex; align-items: center; gap: 15px; max-width: 850px; }
-        .assembly-banner { width: 350px; height: 200px; object-fit: contain; border-radius: 8px; border: 1px solid var(--nasa-blue); }
-        .side-panel { background: #010409; border: 1px solid #30363d; border-radius: 8px; padding: 10px; width: 220px; font-size: 0.68rem; text-align: left; }
-        .stat-row { display: flex; justify-content: space-between; margin-bottom: 6px; background: #161b22; padding: 5px; border-radius: 4px; }
-        .part-tile { background: #161b22; border: 1px solid #30363d; padding: 6px; border-radius: 6px; margin-bottom: 5px; cursor: pointer; text-align: center; font-size: 0.65rem; }
-        .part-tile:hover { border-color: var(--neon-cyan); }
-
-        /* SCREEN 7: SURFACE EXPLORATION GAMEPLAY (surface.png / asteroid-bg.png & astronaut.png) */
-        .gameplay-hud { display: flex; justify-content: space-between; width: 100%; max-width: 850px; background: #000; padding: 6px 15px; border-radius: 6px; border: 1px solid var(--neon-cyan); font-size: 0.7rem; margin-bottom: 6px; }
-        .surface-arena { width: 100%; max-width: 850px; height: 260px; background: url('asteroid-bg.png') center/cover no-repeat, #020617; border-radius: 8px; position: relative; border: 2px solid var(--neon-cyan); overflow: hidden; }
-        .astronaut-obj { position: absolute; bottom: 20px; left: 45%; width: 50px; height: 50px; object-fit: contain; transition: left 0.1s linear; }
-        .danger-alert-overlay { position: absolute; top: 10px; right: 10px; width: 50px; height: 50px; object-fit: contain; animation: blinkAlert 0.4s infinite alternate; display: none; }
-        @keyframes blinkAlert { 0% { opacity: 0.2; } 100% { opacity: 1; } }
-
-        /* SCREEN 8: SCORECARD RESULT (trophy.png) */
-        .scorecard-layout { display: flex; align-items: center; gap: 20px; max-width: 650px; background: #161b22; border: 1px solid var(--success-green); border-radius: 8px; padding: 15px; text-align: left; font-size: 0.72rem; line-height: 1.4; }
-        .trophy-img { width: 120px; height: 120px; object-fit: contain; }
+        /* SCORECARD */
+        .report-box {
+            background: #020617; border: 1px solid var(--neon-cyan); border-radius: 8px;
+            padding: 12px; font-size: 0.68rem; line-height: 1.4; text-align: left; margin-bottom: 8px;
+        }
+        .report-box h3 { margin: 0 0 6px 0; color: var(--neon-yellow); text-align: center; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <div class="game-frame">
-
-        <!-- 1. SPLASH SCREEN -->
-        <div id="screen-splash" class="screen active">
-            <img src="splash-logo.png" alt="Splash Screen" class="splash-banner" onerror="this.src='https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=600'">
-            <h2 style="color:var(--neon-yellow);">NASA SPACE MISSION SIMULATOR</h2>
-            <p>Team: Sky_captains</p>
-            <button class="btn-sci" onclick="startLoading()">INITIALIZE MISSION ➔</button>
-        </div>
-
-        <!-- 2. LOADING SCREEN -->
-        <div id="screen-loading" class="screen">
-            <img src="loading-icon.png" alt="Loading Ring" class="loading-banner" onerror="this.src='https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=300'">
-            <h2 style="font-size: 0.9rem;">Preparing Game Systems...</h2>
-            <p id="loadingText" style="margin:2px;">Loading core modules: 0%</p>
-            <div class="loading-bar-container">
-                <div class="loading-bar-fill" id="loadingFill"></div>
+    <div class="simulator-container">
+        <!-- HEADER WITH 6 METRICS HUD -->
+        <header>
+            <div class="logo">🚀 NASA SPACE APPS [Sky_captains]</div>
+            <div class="hud-metrics" id="hudBar" style="display: none;">
+                <div class="hud-metric-item"><span>Mass</span><b id="m-mass">50kg</b></div>
+                <div class="hud-metric-item"><span>Power</span><b id="m-power">100W</b></div>
+                <div class="hud-metric-item"><span>Budget</span><b id="m-budget">$150M</b></div>
+                <div class="hud-metric-item"><span>Data</span><b id="m-data">0GB</b></div>
+                <div class="hud-metric-item"><span>Comms</span><b id="m-comms">X-Band</b></div>
+                <div class="hud-metric-item"><span>Time</span><b id="m-time">T-00:00</b></div>
             </div>
-        </div>
+        </header>
 
-        <!-- 3. MAIN MENU -->
-        <div id="screen-menu" class="screen">
-            <div class="menu-layout">
-                <img src="menu-rocket.png" alt="Menu Rocket" class="menu-banner" onerror="this.src='https://images.unsplash.com/photo-1517976487492-5750f3195933?w=300'">
-                <div>
-                    <h2 style="color:var(--neon-yellow); margin-bottom:10px; text-align: left;">MAIN MENU</h2>
-                    <div class="menu-grid">
-                        <div class="menu-btn" onclick="goToScreen('screen-levels')">▶ Start Game</div>
-                        <div class="menu-btn" onclick="alert('Settings: Audio [ON], Graphics [ULTRA 4K], Controls [TOUCH D-PAD]')">⚙️ Settings</div>
-                        <div class="menu-btn" onclick="alert('Achievements: Master Engineer, Deep Space Rover, Asteroid Dodger!')">🏆 Achievements</div>
-                        <div class="menu-btn" onclick="alert('Exiting simulation. Thank you for playing, Commander!')">❌ Quit Game</div>
-                    </div>
+        <!-- SCREEN 1: PLAYER MODE (Single vs Team) -->
+        <div id="screen-mode" class="screen active">
+            <h2>Select Operations Mode</h2>
+            <p>Choose solo command or collaborative team roles:</p>
+            <div class="grid-2x2" style="max-width: 600px; margin: 20px auto;">
+                <div class="grid-card" onclick="setMode('Solo Commander')">
+                    <h4>Solo Commander</h4>
+                    <span>Full manual control over all mission parameters.</span>
+                </div>
+                <div class="grid-card" onclick="setMode('Team Mode (4 Roles)')">
+                    <h4>Collaborative Team Mode</h4>
+                    <span>Roles: Mission Planner, Spacecraft Designer, Science Officer, Comms & Resources Manager.</span>
                 </div>
             </div>
         </div>
 
-        <!-- 4. LEVELS SCREEN -->
-        <div id="screen-levels" class="screen">
-            <h2>Select Mission Level</h2>
-            <p>Choose your operational tier:</p>
-            <div class="levels-row">
-                <img src="level1.png" alt="Level 1" class="level-card-img" onclick="selectLevel(1)" title="Level 1: Near Orbit" onerror="this.src='https://images.unsplash.com/photo-1614313913007-2b4ae8ce32d6?w=300'">
-                <img src="level2.png" alt="Level 2" class="level-card-img" onclick="selectLevel(2)" title="Level 2: Lunar Base" onerror="this.src='https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=300'">
-                <img src="level3.png" alt="Level 3" class="level-card-img" onclick="selectLevel(3)" title="Level 3: Deep Asteroid" onerror="this.src='https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=300'">
-            </div>
-            <button class="btn-sci" style="margin-top:15px;" onclick="goToScreen('screen-menu')">← Back to Menu</button>
-        </div>
-
-        <!-- 5. MISSION DETAILS -->
-        <div id="screen-mission-details" class="screen">
-            <h2>Mission Details & Objectives</h2>
-            <div class="mission-layout">
-                <img src="mission-earth.png" alt="Mission Earth" class="mission-banner" onerror="this.src='https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=400'">
-                <div>
-                    <p style="color:var(--neon-yellow); margin-bottom:5px; text-align: left;"><b>Target: Asteroid Deep-Scan & Sample Collection</b></p>
-                    <div class="mission-box">
-                        <ul>
-                            <li>1. Assemble spacecraft hull with proper fuel and thrust capacity.</li>
-                            <li>2. Navigate surface hazards and collect core geological samples.</li>
-                            <li>3. Avoid incoming asteroid debris and maintain power stability.</li>
-                        </ul>
-                    </div>
-                    <button class="btn-sci" style="margin-top:10px; width:100%;" onclick="goToScreen('screen-assembly')">Proceed to Assembly ➔</button>
+        <!-- SCREEN 2: MISSION CATEGORY -->
+        <div id="screen-category" class="screen">
+            <h2>Select Scientific Mission Category</h2>
+            <p>Choose your primary research objective:</p>
+            <div class="grid-2x2">
+                <div class="grid-card" onclick="setCategory('Earth Science')">
+                    <h4>1. Earth Science</h4>
+                    <span>PUNCH / Corona & Climate Observation</span>
+                </div>
+                <div class="grid-card" onclick="setCategory('Heliophysics')">
+                    <h4>2. Heliophysics</h4>
+                    <span>Solar Radiation & Magnetosphere Study</span>
+                </div>
+                <div class="grid-card" onclick="setCategory('Planetary Science')">
+                    <h4>3. Planetary Science</h4>
+                    <span>Dawn / Asteroid & Dwarf Planet Mapping</span>
+                </div>
+                <div class="grid-card" onclick="setCategory('Astrophysics')">
+                    <h4>4. Astrophysics</h4>
+                    <span>Deep Space Telescopes & Cosmos Analysis</span>
                 </div>
             </div>
         </div>
 
-        <!-- 6. ASSEMBLY WORKBENCH -->
+        <!-- SCREEN 3: LEVEL SELECTION -->
+        <div id="screen-level" class="screen">
+            <h2>Select Mission Difficulty & Orbit Target</h2>
+            <p>Trade mass limits against distance and destination:</p>
+            <div class="grid-2x2" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="grid-card" onclick="setLevel('Beginner (ISS)', 100)">
+                    <h4>Beginner: ISS</h4>
+                    <span>Low mass & strict size limits (ISS Experiment).</span>
+                </div>
+                <div class="grid-card" onclick="setLevel('Intermediate (LEO/GEO)', 150)">
+                    <h4>Intermediate: LEO/GEO</h4>
+                    <span>Satellite constellations & weather monitoring.</span>
+                </div>
+                <div class="grid-card" onclick="setLevel('Advanced (Deep Space)', 200)">
+                    <h4>Advanced: Deep Asteroid / Mars</h4>
+                    <span>Heavy interplanetary exploration mission.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: 4-SEGMENT ASSEMBLY WORKBENCH (TRADE-OFFS) -->
         <div id="screen-assembly" class="screen">
-            <h2>Rocket Assembly Workbench</h2>
-            <div class="assembly-layout">
-                <div class="side-panel">
-                    <p style="color:var(--neon-cyan); margin:0 0 5px 0;">SPACECRAFT STATS</p>
-                    <div class="stat-row"><span>Fuel:</span> <b id="statFuel">80%</b></div>
-                    <div class="stat-row"><span>Damage:</span> <b id="statDamage">0%</b></div>
-                    <div class="stat-row"><span>Speed:</span> <b id="statSpeed">1200 m/s</b></div>
+            <h2>4-Segment Assembly Workbench (Trade-off Engine)</h2>
+            <div class="assembly-grid">
+                <!-- 1. Space Segment -->
+                <div class="segment-box">
+                    <h4>1. Space Segment</h4>
+                    <button class="comp-btn" onclick="selectPart('space', 'IM15 Camera', 15, 20, 10, 5)">IM15 Camera (+15kg, 20W)</button>
+                    <button class="comp-btn" onclick="selectPart('space', 'Square High-Res', 25, 30, 25, 10)">Square High-Res (+25kg)</button>
+                    <button class="comp-btn" onclick="selectPart('space', 'L3Harris Antenna', 10, 15, 15, 8)">L3Harris Antenna (+10kg)</button>
                 </div>
-                <img src="rocket-assembly.png" alt="Rocket Assembly" class="assembly-banner" onerror="this.src='https://images.unsplash.com/photo-1517976487492-5750f3195933?w=600'">
-                <div class="side-panel">
-                    <p style="color:var(--neon-cyan); margin:0 0 5px 0;">AVAILABLE PARTS</p>
-                    <div class="part-tile" onclick="upgradePart('camera')">📷 HD Camera (+10 Speed)</div>
-                    <div class="part-tile" onclick="upgradePart('solar')">⚡ Solar Array (+15 Fuel)</div>
-                    <div class="part-tile" onclick="upgradePart('shield')">🛡️ Shield (-10 Damage)</div>
-                    <button class="btn-sci" style="width:100%; margin-top:5px; background:var(--success-green);" onclick="goToScreen('screen-gameplay'); startSurfaceGameplay();">LAUNCH 🚀</button>
+                <!-- 2. Launch Segment -->
+                <div class="segment-box">
+                    <h4>2. Launch Segment</h4>
+                    <button class="comp-btn" onclick="selectPart('launch', 'NG-18 Medium Rocket', 50, 0, 100, 0)">NG-18 Medium (Thrust: 250kN)</button>
+                    <button class="comp-btn" onclick="selectPart('launch', 'SLS Heavy Rocket', 120, 0, 500, 0)">SLS Heavy (Thrust: 800kN)</button>
+                </div>
+                <!-- 3. Orbit Segment -->
+                <div class="segment-box">
+                    <h4>3. Orbit Destination</h4>
+                    <button class="comp-btn" onclick="selectPart('orbit', 'LEO Orbit', 0, 0, 0, 0)">LEO (Low Earth Orbit)</button>
+                    <button class="comp-btn" onclick="selectPart('orbit', 'GEO Orbit', 10, 5, 0, 0)">GEO (Geostationary)</button>
+                    <button class="comp-btn" onclick="selectPart('orbit', 'Deep Space', 20, 10, 0, 0)">Deep Space Interplanetary</button>
+                </div>
+                <!-- 4. Ground Segment -->
+                <div class="segment-box">
+                    <h4>4. Ground Segment</h4>
+                    <button class="comp-btn" onclick="selectPart('ground', 'NASA Ground Station', 5, 10, 0, 20)">NASA Deep Ground Station</button>
+                    <button class="comp-btn" onclick="selectPart('ground', 'Mobile Dish Array', 2, 5, 0, 10)">Mobile Tracking Dish</button>
                 </div>
             </div>
+            <button class="btn-nasa" onclick="runLaunchVerification()">VERIFY & EXECUTE LAUNCH 🚀</button>
         </div>
 
-        <!-- 7. SURFACE EXPLORATION GAMEPLAY -->
-        <div id="screen-gameplay" class="screen">
-            <div class="gameplay-hud">
-                <span>Fuel: <b id="gameFuel">85%</b></span>
-                <span>Power: <b id="gamePower">95%</b></span>
-                <span>Health: <b id="gameHealth">100%</b></span>
-                <span>Time: <b id="gameTimer">00:12:15</b></span>
-            </div>
-            <div class="surface-arena" id="surfaceArena">
-                <!-- Astronaut sprite moving across -->
-                <img src="astronaut.png" alt="Astronaut" class="astronaut-obj" id="astronautObj" onerror="this.src='https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=100'">
-                <!-- Danger Alert Image -->
-                <img src="danger-alert.png" alt="Danger Alert" class="danger-alert-overlay" id="dangerAlertImg" onerror="this.style.display='none'">
-            </div>
-            <div style="display:flex; gap:12px; margin-top:8px;">
-                <button class="btn-sci" onclick="moveAstronaut(-35)">◀ Walk Left</button>
-                <button class="btn-sci" onclick="moveAstronaut(35)">Walk Right ▶</button>
-                <button class="btn-sci" style="background:var(--success-green);" onclick="completeMission(true)">Complete & Extract Sample 🧪</button>
-            </div>
-        </div>
-
-        <!-- 8. SCORECARD RESULT -->
-        <div id="screen-scorecard" class="screen">
-            <h2 id="scoreTitle" style="color:var(--success-green); margin-bottom:10px;">MISSION SUCCESSFUL</h2>
-            <div class="scorecard-layout">
-                <img src="trophy.png" alt="Trophy" class="trophy-img" onerror="this.src='https://images.unsplash.com/photo-1567427017947-545c5f2d16ad?w=200'">
-                <div>
-                    <h3 style="color:var(--neon-yellow); margin:0 0 5px 0;">FINAL SCORE: 9,850</h3>
-                    <div id="scorecardContent">
-                        <!-- Filled via JS -->
-                    </div>
+        <!-- SCREEN 5: SIMULATION & LIVE EVENTS (CANVAS + ANOMALY) -->
+        <div id="screen-sim" class="screen">
+            <h2>Live Flight Simulation & Anomaly Event Handler</h2>
+            <div class="sim-arena">
+                <canvas id="simCanvas"></canvas>
+                <!-- Anomaly Pop-up Modal -->
+                <div class="anomaly-modal" id="anomalyModal">
+                    <h3 id="anomalyTitle">⚠️ CRITICAL ANOMALY: SOLAR STORM</h3>
+                    <p id="anomalyDesc">Solar flare detected! Temperature rising in avionic core. Select emergency action:</p>
+                    <button class="btn-nasa" style="background:var(--success-green); color:#000; margin-bottom:5px;" onclick="resolveAnomaly(true)">Shields Up & Reroute Power</button>
+                    <button class="btn-nasa" style="background:var(--alert-red); color:#fff;" onclick="resolveAnomaly(false)">Ignore & Maintain Trajectory</button>
                 </div>
             </div>
-            <button class="btn-sci" style="margin-top:12px;" onclick="location.reload()">PLAY AGAIN ⟳</button>
+            <button class="btn-nasa" id="proceedScoreBtn" style="display:none;" onclick="showScorecard()">VIEW MISSION SCORECARD ➔</button>
+        </div>
+
+        <!-- SCREEN 6: SCORECARD & RE-SIMULATE -->
+        <div id="screen-score" class="screen" style="justify-content: center;">
+            <h2>Mission Evaluation Report</h2>
+            <div class="report-box" id="scoreReport">
+                <!-- Filled via JS -->
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-nasa" onclick="location.reload()">RE-SIMULATE / NEW MISSION ⟳</button>
+            </div>
         </div>
 
     </div>
 
     <script>
-        function goToScreen(screenId) {
+        let game = {
+            mode: '', category: '', levelName: '', maxMassLimit: 100,
+            mass: 40, power: 50, budget: 150, data: 10, comms: 'X-Band', time: 'T-00:00',
+            parts: { space: null, launch: null, orbit: null, ground: null },
+            thrust: 250, anomalyResolved: null
+        };
+
+        function setMode(mode) { game.mode = mode; goTo('screen-category'); }
+        function setCategory(cat) { game.category = cat; goTo('screen-level'); }
+        function setLevel(name, limit) {
+            game.levelName = name; game.maxMassLimit = limit;
+            document.getElementById('hudBar').style.display = 'grid';
+            goTo('screen-assembly');
+            updateHud();
+        }
+
+        function goTo(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
         }
 
-        function startLoading() {
-            goToScreen('screen-loading');
-            let fill = document.getElementById('loadingFill');
-            let text = document.getElementById('loadingText');
-            let progress = 0;
-            let timer = setInterval(() => {
-                progress += 5;
-                fill.style.width = progress + '%';
-                text.innerText = `Loading core modules: ${progress}%`;
-                if(progress >= 100) {
-                    clearInterval(timer);
-                    goToScreen('screen-menu');
-                }
-            }, 40);
+        function updateHud() {
+            document.getElementById('m-mass').innerText = game.mass + 'kg';
+            document.getElementById('m-power').innerText = game.power + 'W';
+            document.getElementById('m-budget').innerText = '$' + game.budget + 'M';
+            document.getElementById('m-data').innerText = game.data + 'GB';
+            document.getElementById('m-comms').innerText = game.comms;
+            document.getElementById('m-time').innerText = game.time;
         }
 
-        let currentLevel = 1;
-        function selectLevel(lvl) {
-            currentLevel = lvl;
-            goToScreen('screen-mission-details');
+        function selectPart(seg, name, mAdd, pAdd, bCost, dAdd) {
+            game.parts[seg] = name;
+            game.mass += mAdd;
+            game.power += pAdd;
+            game.budget -= Math.floor(bCost / 2);
+            game.data += dAdd;
+            if(seg === 'launch') game.thrust = (name.includes('SLS') ? 800 : 250);
+            updateHud();
         }
 
-        let shipStats = { fuel: 80, damage: 0, speed: 1200 };
-        function upgradePart(type) {
-            if(type === 'camera') shipStats.speed += 200;
-            if(type === 'solar') shipStats.fuel = Math.min(100, shipStats.fuel + 20);
-            if(type === 'shield') shipStats.damage = Math.max(0, shipStats.damage - 20);
-            document.getElementById('statFuel').innerText = shipStats.fuel + '%';
-            document.getElementById('statDamage').innerText = shipStats.damage + '%';
-            document.getElementById('statSpeed').innerText = shipStats.speed + ' m/s';
-        }
-
-        function startSurfaceGameplay() {
-            // Trigger hazard alert after 2 seconds based on danger-alert.png
-            setTimeout(() => {
-                let alertImg = document.getElementById('dangerAlertImg');
-                if(alertImg) alertImg.style.display = 'block';
-            }, 2000);
-        }
-
-        let astronautX = 45; // percentage
-        function moveAstronaut(offset) {
-            astronautX = Math.max(5, Math.min(85, astronautX + (offset > 0 ? 5 : -5)));
-            document.getElementById('astronautObj').style.left = astronautX + '%';
-        }
-
-        function completeMission(success) {
-            goToScreen('screen-scorecard');
-            let title = document.getElementById('scoreTitle');
-            let content = document.getElementById('scorecardContent');
-
-            if(success) {
-                title.innerText = "MISSION SUCCESSFUL 🏆";
-                title.style.color = "var(--success-green)";
-                content.innerHTML = `
-                    <p><b>Level ${currentLevel} Summary:</b> Navigated asteroid surface hazards safely, avoiding incoming debris using optimal trajectory[span_0](start_span)[span_0](end_span).</p>
-                    <p><b>Scientific Outcome:</b> Geological core samples successfully extracted and downlinked to NASA Ground Station[span_1](start_span)[span_1](end_span).</p>
-                `;
-            } else {
-                title.innerText = "MISSION FAILED ⚠️";
-                title.style.color = "var(--alert-red)";
-                content.innerHTML = `
-                    <p>Critical failure due to asteroid impact or power depletion.</p>
-                `;
+        function runLaunchVerification() {
+            // Launch Verification Check
+            if(game.mass > game.maxMassLimit) {
+                alert(`[LAUNCH ABORT] Total Mass (${game.mass}kg) exceeds ${game.levelName} limit (${game.maxMassLimit}kg)! Optimize your trade-offs.`);
+                return;
             }
+            if(game.budget < 20) {
+                alert(`[LAUNCH ABORT] Insufficient budget ($${game.budget}M remaining). Mission unviable.`);
+                return;
+            }
+            goTo('screen-sim');
+            startCanvasSimulation();
         }
-    </script>
-</body>
-                                                                                </html>
-                    
+
+        // 2D CANVAS SIMULATION & ANOMALY TRIGGER
+        function startCanvasSimulation() {
+            const canvas = document.getElementById('simCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+
+            let rocketY = canvas.height - 50;
+            let phase = 'liftoff'; // liftoff, orbit, anomaly, success
+            let animId;
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw Starfield
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(canvas.width * 0.2, canvas.height * 0.1, 2, 2);
+                ctx.fillRect(canvas.width * 0.7, canvas.height * 0.3, 2, 2);
+                ctx.fillRect(canvas.width * 0.4, canvas.height * 0.6, 1, 1);
+
+                // Draw Planet Earth at bottom during liftoff
+                if(phase === 'liftoff') {
+                    ctx.fillStyle = '#1d4ed8';
+                    ctx.beginPath();
+                    ctx.arc(canvas.width / 2, canvas.height + 300, 350, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Draw Rocket
+                ctx.fillStyle = '#f3e600';
+                ctx.fillRect(canvas.width / 2 - 10, rocketY, 20, 50);
+                // Flame
+                if(phase === 'liftoff' || phase === 'orbit') {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.moveTo(canvas.width / 2 - 10, rocketY + 50);
+                    ctx.lineTo(canvas.width / 2, rocketY + 75);
+                    ctx.lineTo(canvas.width / 2 + 10, rocketY + 50);
+                    ctx.fill();
+                }
+
+                if(phase === 'liftoff') {
+                    rocketY -= 2;
+                    if(rocketY < canvas.height / 2) {
+                        phase = 'anomaly';
+                        setTimeout(() => {
+                            document.getElementById('anomalyModal').style.display = 'block';
+                        }, 500);
+                    }
+                }
+
+                if(phase === 'success' || phase === 'orbit') {
+                    // Orbiting motion
+                    ctx.strokeStyle = '#38bdf8';
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.arc(canvas.width / 2, canvas.height / 2, 80, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                if(phase !== 'paused') {
+                    animId = requestAnimationFrame(draw);
+                }
+            }
+            draw();
+            window.simCancel = () => cancelAnimationFrame(animId);
+        }
+
+        function resolveAnomaly(survived) {
+            document.getElementById('anomalyModal').style.display = 'none';
+            game.anomalyResolved = survived;
+            if(!survived) {
+                game.power = 0;
+                game.data = 0;
+            }
+            document.getElementById('proceedScoreBtn').style.display = 'block';
+        }
+
+        function showScorecard() {
+            if(window.simCancel) window.simCancel();
+            goTo('screen-score');
+            const report = document.getElementById('scoreReport');
+            
+            let passed = game.anomalyResolved !== false && game.mass <= game.maxMassLimit;
+            let score = passed ? 960 : 320;
+
+            report.innerHTML = `
+                <h3 style="color:${passed ? 'var(--success-green)' : 'var(--alert-red)'};">
+                    ${passed ? '🌟 MISSION SUCCESSFUL (Score: ' + score + '/1000)' : '⚠️ MISSION FAILED / CRITICAL ANOMALY'}
+                </h3>
+                <p><b>Mode:</b> ${game.mode
