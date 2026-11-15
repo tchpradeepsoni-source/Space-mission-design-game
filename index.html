@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NASA Deep Space Advanced Cockpit Simulator - Team Sky_captains</title>
+    <title>NASA Deep Space Cockpit Simulator - Team Sky_captains</title>
     <style>
         :root {
             --bg-space: #01030d;
-            --panel-bg: rgba(8, 12, 22, 0.95);
+            --panel-bg: rgba(8, 12, 22, 0.96);
             --nasa-blue: #1d4ed8;
             --neon-cyan: #38bdf8;
             --neon-yellow: #facc15;
@@ -36,7 +36,7 @@
         }
         @keyframes twinkle {
             0%, 100% { opacity: 0.2; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 8px var(--neon-cyan); }
+            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 10px var(--neon-cyan); }
         }
 
         /* COCKPIT FRAME CONTAINER */
@@ -44,7 +44,7 @@
             width: 98vw; height: 96vh;
             max-width: 1024px; max-height: 576px;
             background: var(--panel-bg);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(18px);
             border: 3px solid var(--neon-cyan);
             border-radius: 16px;
             display: flex; flex-direction: column; justify-content: space-between;
@@ -233,48 +233,48 @@
             <div class="grid-2x2" style="grid-template-columns: repeat(3, 1fr); max-width: 820px;">
                 <div class="grid-card" onclick="setLevel('Beginner (ISS)', 100)">
                     <h4>Beginner: ISS</h4>
-                    <span>Strict mass limits (100kg max)[span_0](start_span)[span_0](end_span).</span>
+                    <span>Strict mass limits (100kg max).</span>
                 </div>
                 <div class="grid-card" onclick="setLevel('Intermediate (LEO/GEO)', 150)">
                     <h4>Intermediate: LEO/GEO</h4>
-                    <span>Satellite constellations (150kg max)[span_1](start_span)[span_1](end_span).</span>
+                    <span>Satellite constellations (150kg max).</span>
                 </div>
                 <div class="grid-card" onclick="setLevel('Advanced (Deep Space)', 200)">
                     <h4>Advanced: Deep Asteroid / Mars</h4>
-                    <span>Interplanetary mission (200kg max)[span_2](start_span)[span_2](end_span).</span>
+                    <span>Interplanetary mission (200kg max).</span>
                 </div>
             </div>
         </div>
 
-        <!-- SCREEN 4: 4-SEGMENT ASSEMBLY WORKBENCH (TRADE-OFFS) -->
+        <!-- SCREEN 4: 4-SEGMENT ASSEMBLY WORKBENCH (TRADE-OFF ENGINE) -->
         <div id="screen-assembly" class="screen">
             <h2>4-Segment Assembly Workbench (Trade-off Engine)</h2>
             <div class="assembly-grid">
                 <!-- 1. Space Segment -->
                 <div class="segment-box">
                     <h4>1. Space Segment</h4>
-                    <button class="comp-btn" onclick="selectPart('space', 'IM15 Camera', 15, 20, 10, 5, this)">IM15 Camera (+15kg, 20W)</button>
-                    <button class="comp-btn" onclick="selectPart('space', 'Square High-Res', 25, 30, 25, 10, this)">Square High-Res (+25kg)</button>
-                    <button class="comp-btn" onclick="selectPart('space', 'L3Harris Antenna', 10, 15, 15, 8, this)">L3Harris Antenna (+10kg)</button>
+                    <button class="comp-btn" onclick="selectPart('space', 'IM15 Camera', 15, 20, 10, 5, this)">IM15 Camera (+15kg, $10M)</button>
+                    <button class="comp-btn" onclick="selectPart('space', 'Square High-Res', 25, 30, 25, 10, this)">Square High-Res (+25kg, $25M)</button>
+                    <button class="comp-btn" onclick="selectPart('space', 'L3Harris Antenna', 10, 15, 15, 8, this)">L3Harris Antenna (+10kg, $15M)</button>
                 </div>
                 <!-- 2. Launch Segment -->
                 <div class="segment-box">
                     <h4>2. Launch Segment</h4>
-                    <button class="comp-btn" onclick="selectPart('launch', 'NG-18 Medium', 50, 0, 100, 0, this)">NG-18 Medium (250kN)</button>
-                    <button class="comp-btn" onclick="selectPart('launch', 'SLS Heavy Rocket', 120, 0, 500, 0, this)">SLS Heavy (800kN)</button>
+                    <button class="comp-btn" onclick="selectPart('launch', 'NG-18 Medium', 50, 0, 100, 0, this)">NG-18 Medium (+50kg, $100M)</button>
+                    <button class="comp-btn" onclick="selectPart('launch', 'SLS Heavy Rocket', 120, 0, 500, 0, this)">SLS Heavy (+120kg, $500M)</button>
                 </div>
                 <!-- 3. Orbit Segment -->
                 <div class="segment-box">
                     <h4>3. Orbit Destination</h4>
-                    <button class="comp-btn" onclick="selectPart('orbit', 'LEO Orbit', 0, 0, 0, 0, this)">LEO (Low Earth Orbit)</button>
-                    <button class="comp-btn" onclick="selectPart('orbit', 'GEO Orbit', 10, 5, 0, 0, this)">GEO (Geostationary)</button>
-                    <button class="comp-btn" onclick="selectPart('orbit', 'Deep Space', 20, 10, 0, 0, this)">Deep Space Interplanetary</button>
+                    <button class="comp-btn" onclick="selectPart('orbit', 'LEO Orbit', 0, 0, 0, 0, this)">LEO Orbit (+0kg, $0M)</button>
+                    <button class="comp-btn" onclick="selectPart('orbit', 'GEO Orbit', 10, 5, 20, 0, this)">GEO Orbit (+10kg, $20M)</button>
+                    <button class="comp-btn" onclick="selectPart('orbit', 'Deep Space', 20, 10, 50, 0, this)">Deep Space (+20kg, $50M)</button>
                 </div>
                 <!-- 4. Ground Segment -->
                 <div class="segment-box">
                     <h4>4. Ground Segment</h4>
-                    <button class="comp-btn" onclick="selectPart('ground', 'NASA Ground Station', 5, 10, 0, 20, this)">NASA Ground Station</button>
-                    <button class="comp-btn" onclick="selectPart('ground', 'Mobile Dish Array', 2, 5, 0, 10, this)">Mobile Tracking Dish</button>
+                    <button class="comp-btn" onclick="selectPart('ground', 'NASA Ground Station', 5, 10, 30, 20, this)">NASA Station (+5kg, $30M)</button>
+                    <button class="comp-btn" onclick="selectPart('ground', 'Mobile Dish Array', 2, 5, 15, 10, this)">Mobile Dish (+2kg, $15M)</button>
                 </div>
             </div>
             <button class="btn-nasa" onclick="runLaunchVerification()">VERIFY & EXECUTE LAUNCH 🚀</button>
@@ -282,13 +282,13 @@
 
         <!-- SCREEN 5: SIMULATION & LIVE EVENTS (CANVAS + ANOMALY) -->
         <div id="screen-sim" class="screen">
-            <h2>Live Flight Simulation & Anomaly Event Handler[span_3](start_span)[span_3](end_span)</h2>
+            <h2>Live Flight Simulation & Anomaly Event Handler</h2>
             <div class="sim-arena">
                 <canvas id="simCanvas"></canvas>
                 <!-- Anomaly Pop-up Modal -->
                 <div class="anomaly-modal" id="anomalyModal">
-                    <h3 id="anomalyTitle">⚠️ CRITICAL ANOMALY: SOLAR STORM[span_4](start_span)[span_4](end_span)</h3>
-                    <p id="anomalyDesc">Solar flare detected! Temperature rising in avionic core. Select emergency action[span_5](start_span)[span_5](end_span):</p>
+                    <h3 id="anomalyTitle">⚠️ CRITICAL ANOMALY: SOLAR STORM</h3>
+                    <p id="anomalyDesc">Solar flare detected! Temperature rising in avionic core. Select emergency action:</p>
                     <button class="btn-nasa" style="background:var(--success-green); color:#000; margin-bottom:4px;" onclick="resolveAnomaly(true)">Shields Up & Reroute Power</button>
                     <button class="btn-nasa" style="background:var(--alert-red); color:#fff;" onclick="resolveAnomaly(false)">Ignore & Maintain Trajectory</button>
                 </div>
@@ -312,9 +312,14 @@
     <script>
         let game = {
             mode: '', category: '', levelName: '', maxMassLimit: 100,
-            mass: 40, power: 50, budget: 150, data: 10, comms: 'X-Band', time: 'T-00:00',
-            parts: { space: null, launch: null, orbit: null, ground: null },
-            thrust: 250, anomalyResolved: null
+            baseMass: 25, basePower: 20, baseBudget: 150, baseData: 5,
+            selectedParts: {
+                space: { name: 'None', mass: 0, power: 0, budget: 0, data: 0 },
+                launch: { name: 'None', mass: 0, power: 0, budget: 0, data: 0 },
+                orbit: { name: 'None', mass: 0, power: 0, budget: 0, data: 0 },
+                ground: { name: 'None', mass: 0, power: 0, budget: 0, data: 0 }
+            },
+            comms: 'X-Band', time: 'T-00:00', anomalyResolved: null
         };
 
         function goTo(screenId) {
@@ -342,132 +347,27 @@
         }
 
         function updateHud() {
-            document.getElementById('m-mass').innerText = game.mass + 'kg';
-            document.getElementById('m-power').innerText = game.power + 'W';
-            document.getElementById('m-budget').innerText = '$' + game.budget + 'M';
-            document.getElementById('m-data').innerText = game.data + 'GB';
+            let totalMass = game.baseMass + game.selectedParts.space.mass + game.selectedParts.launch.mass + game.selectedParts.orbit.mass + game.selectedParts.ground.mass;
+            let totalPower = game.basePower + game.selectedParts.space.power + game.selectedParts.launch.power + game.selectedParts.orbit.power + game.selectedParts.ground.power;
+            let totalBudget = game.baseBudget - (game.selectedParts.space.budget + game.selectedParts.launch.budget + game.selectedParts.orbit.budget + game.selectedParts.ground.budget);
+            let totalData = game.baseData + game.selectedParts.space.data + game.selectedParts.launch.data + game.selectedParts.orbit.data + game.selectedParts.ground.data;
+
+            game.currentMass = totalMass;
+            game.currentPower = totalPower;
+            game.currentBudget = totalBudget;
+            game.currentData = totalData;
+
+            document.getElementById('m-mass').innerText = totalMass + 'kg';
+            document.getElementById('m-power').innerText = totalPower + 'W';
+            document.getElementById('m-budget').innerText = '$' + totalBudget + 'M';
+            document.getElementById('m-data').innerText = totalData + 'GB';
             document.getElementById('m-comms').innerText = game.comms;
             document.getElementById('m-time').innerText = game.time;
         }
 
-        function selectPart(seg, name, mAdd, pAdd, bCost, dAdd, btnElem) {
+        function selectPart(seg, name, mass, power, budget, data, btnElem) {
             btnElem.parentElement.querySelectorAll('.comp-btn').forEach(b => b.classList.remove('selected'));
             btnElem.classList.add('selected');
 
-            game.parts[seg] = name;
-            game.mass += mAdd;
-            game.power += pAdd;
-            game.budget -= Math.floor(bCost / 2);
-            game.data += dAdd;
-            if(seg === 'launch') game.thrust = (name.includes('SLS') ? 800 : 250);
-            updateHud();
-        }
-
-        function runLaunchVerification() {
-            if(game.mass > game.maxMassLimit) {
-                alert(`[LAUNCH ABORT] Total Mass (${game.mass}kg) exceeds ${game.levelName} limit (${game.maxMassLimit}kg)! Optimize your trade-offs.`);
-                return;
-            }
-            if(game.budget < 20) {
-                alert(`[LAUNCH ABORT] Insufficient budget ($${game.budget}M remaining). Mission unviable.`);
-                return;
-            }
-            goTo('screen-sim');
-            startCanvasSimulation();
-        }
-
-          function startCanvasSimulation() {
-            const canvas = document.getElementById('simCanvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
-
-            let rocketY = canvas.height - 40;
-            let phase = 'liftoff';
-            let animId;
-
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(canvas.width * 0.2, canvas.height * 0.1, 2, 2);
-                ctx.fillRect(canvas.width * 0.7, canvas.height * 0.3, 2, 2);
-                ctx.fillRect(canvas.width * 0.4, canvas.height * 0.6, 1, 1);
-
-                if(phase === 'liftoff') {
-                    ctx.fillStyle = '#1d4ed8';
-                    ctx.beginPath();
-                    ctx.arc(canvas.width / 2, canvas.height + 300, 350, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-
-                ctx.fillStyle = '#f3e600';
-                ctx.fillRect(canvas.width / 2 - 8, rocketY, 16, 40);
-                
-                if(phase === 'liftoff' || phase === 'orbit') {
-                    ctx.fillStyle = '#ef4444';
-                    ctx.beginPath();
-                    ctx.moveTo(canvas.width / 2 - 8, rocketY + 40);
-                    ctx.lineTo(canvas.width / 2, rocketY + 60);
-                    ctx.lineTo(canvas.width / 2 + 8, rocketY + 40);
-                    ctx.fill();
-                }
-
-                if(phase === 'liftoff') {
-                    rocketY -= 2;
-                    if(rocketY < canvas.height / 2) {
-                        phase = 'anomaly';
-                        setTimeout(() => {
-                            document.getElementById('anomalyModal').style.display = 'block';
-                        }, 400);
-                    }
-                }
-
-                if(phase === 'success' || phase === 'orbit') {
-                    ctx.strokeStyle = '#38bdf8';
-                    ctx.setLineDash([4, 4]);
-                    ctx.beginPath();
-                    ctx.arc(canvas.width / 2, canvas.height / 2, 70, 0, Math.PI * 2);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                }
-
-                if(phase !== 'paused') {
-                    animId = requestAnimationFrame(draw);
-                }
-            }
-            draw();
-            window.simCancel = () => cancelAnimationFrame(animId);
-        }
-
-        function resolveAnomaly(survived) {
-            document.getElementById('anomalyModal').style.display = 'none';
-            game.anomalyResolved = survived;
-            if(!survived) {
-                game.power = 0;
-                game.data = 0;
-            }
-            document.getElementById('proceedScoreBtn').style.display = 'block';
-        }
-
-        function showScorecard() {
-            if(window.simCancel) window.simCancel();
-            goTo('screen-score');
-            const report = document.getElementById('scoreReport');
-            
-            let passed = game.anomalyResolved !== false && game.mass <= game.maxMassLimit;
-            let score = passed ? 960 : 320;
-
-            report.innerHTML = `
-                <h3 style="color:${passed ? 'var(--success-green)' : 'var(--alert-red)'};">
-                    ${passed ? '🌟 MISSION SUCCESSFUL (Score: ' + score + '/1000)' : '⚠️ MISSION FAILED / CRITICAL ANOMALY'}
-                </h3>
-                <p><b>Mode:</b> ${game.mode} | <b>Category:</b> ${game.category} | <b>Level:</b> ${game.levelName}</p>
-                <p><b>Trade-off Analysis:</b> Total Mass: ${game.mass}kg (Limit: ${game.maxMassLimit}kg), Power Consumed: ${game.power}W, Remaining Budget: $${game.budget}M.</p>
-                <p><b>Scientific Outcome:</b> ${passed ? 'Payload successfully deployed. Telemetry downlinked via NASA Ground Station[span_6](start_span)[span_6](end_span).' : 'Spacecraft disabled due to unmanaged solar storm anomaly or mass overload.'}</p>
-                <p><b>Why it ${passed ? 'Passed' : 'Failed'}:</b> ${passed ? 'Optimal trade-offs between scientific instrumentation weight and rocket thrust capacity.' : 'Exceeded structural limits or failed anomaly mitigation protocol.'}</p>
-            `;
-        }
-    </script>
-</body>
-            </html>
+            // Correct replacement logic ensuring
+        
