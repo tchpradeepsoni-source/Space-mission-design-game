@@ -369,7 +369,8 @@
             btnElem.parentElement.querySelectorAll('.comp-btn').forEach(b => b.classList.remove('selected'));
             btnElem.classList.add('selected');
 
-         // Correct replacement logic ensuring accurate mass and budget recalculation
+    
+          // Correct replacement logic ensuring accurate mass and budget recalculation
             game.selectedParts[seg] = { name, mass, power, budget, data };
             updateHud();
         }
